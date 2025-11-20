@@ -13,6 +13,13 @@ interface Offer {
   sentAt: Date
   respondedAt: Date | null
   content: string
+  generalOfferId?: string | null
+  generalOffer?: {
+    id: string
+    vacancy: {
+      title: string
+    } | null
+  } | null
   candidate: {
     user: {
       name: string | null
@@ -33,37 +40,43 @@ interface Offer {
 interface KanbanColumn {
   id: string
   title: string
-  color: "yellow" | "green" | "red"
-  status: string
+  color: "yellow" | "green" | "red" | "default"
+  filter: (offers: Offer[]) => Offer[]
 }
 
 export function OffersKanban({ offers }: { offers: Offer[] }) {
   const columns: KanbanColumn[] = useMemo(
     () => [
       {
+        id: "general",
+        title: "General Offer",
+        color: "default",
+        filter: (offers) => offers.filter((offer) => offer.type === "general"),
+      },
+      {
         id: "pending",
         title: "Pending",
         color: "yellow",
-        status: "pending",
+        filter: (offers) => offers.filter((offer) => (offer.status === "pending" || offer.status === "sent") && offer.type === "personal"),
       },
       {
         id: "accepted",
         title: "Accepted",
         color: "green",
-        status: "accepted",
+        filter: (offers) => offers.filter((offer) => offer.status === "accepted" && offer.type === "personal"),
       },
       {
         id: "declined",
         title: "Declined",
         color: "red",
-        status: "declined",
+        filter: (offers) => offers.filter((offer) => offer.status === "declined" && offer.type === "personal"),
       },
     ],
     []
   )
 
-  const getColumnOffers = (status: string) => {
-    return offers.filter((offer) => offer.status === status)
+  const getColumnOffers = (filter: (offers: Offer[]) => Offer[]) => {
+    return filter(offers)
   }
 
   const getColumnColor = (color: string) => {
@@ -100,9 +113,13 @@ export function OffersKanban({ offers }: { offers: Offer[] }) {
       <div className="overflow-x-auto pb-4">
         <div className="flex gap-4 min-w-max">
           {columns.map((column) => {
-            const columnOffers = getColumnOffers(column.status)
+            const columnOffers = getColumnOffers(column.filter)
+            // For General Offer column, calculate percentage from all offers
+            // For other columns, calculate from personal offers only
+            const personalOffers = offers.filter((o) => o.type === "personal")
+            const totalForPercentage = column.id === "general" ? totalOffers : personalOffers.length
             const percentage =
-              totalOffers > 0 ? Math.round((columnOffers.length / totalOffers) * 100) : 0
+              totalForPercentage > 0 ? Math.round((columnOffers.length / totalForPercentage) * 100) : 0
 
             return (
               <div
@@ -151,6 +168,12 @@ export function OffersKanban({ offers }: { offers: Offer[] }) {
                             {offer.test && (
                               <p className="text-xs text-muted-foreground">
                                 Test: {offer.test.title}
+                              </p>
+                            )}
+                            {offer.type === "personal" && offer.generalOfferId && (
+                              <p className="text-xs text-blue-600 font-medium">
+                                From General Offer
+                                {offer.generalOffer?.vacancy && ` (${offer.generalOffer.vacancy.title})`}
                               </p>
                             )}
                             <p className="text-xs text-muted-foreground">

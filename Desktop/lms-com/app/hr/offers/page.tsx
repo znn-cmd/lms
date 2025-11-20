@@ -36,6 +36,16 @@ export default async function OffersPage() {
           title: true,
         },
       },
+      generalOffer: {
+        select: {
+          id: true,
+          vacancy: {
+            select: {
+              title: true,
+            },
+          },
+        },
+      },
     },
     orderBy: { createdAt: "desc" },
   })

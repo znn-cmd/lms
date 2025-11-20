@@ -390,6 +390,10 @@ model Offer {
   templateId     String?
   template       OfferTemplate?   @relation(fields: [templateId], references: [id])
   
+  generalOfferId String?          // Link to general offer if this personal offer was created from a general one
+  generalOffer   Offer?           @relation("GeneralToPersonal", fields: [generalOfferId], references: [id])
+  personalOffers  Offer[]          @relation("GeneralToPersonal")
+  
   content        String           // Rendered content
   contentRu      String?
   

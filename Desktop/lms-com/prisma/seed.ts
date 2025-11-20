@@ -467,6 +467,149 @@ HR Team`,
 
   console.log('✅ Offer templates created')
 
+  // Create General Offer for vacancy
+  const generalOffer = await prisma.offer.create({
+    data: {
+      type: 'general',
+      vacancyId: vacancyRealtor.id,
+      testId: test1.id,
+      templateId: offerTemplate.id,
+      content: `Dear Candidate,
+
+We are pleased to offer you the position of Real Estate Agent (Dubai).
+
+Terms:
+- Commission: 10%
+- Start date: Flexible
+- Location: Dubai
+
+Congratulations on successfully completing the course and test!
+
+We look forward to welcoming you to our team.
+
+Best regards,
+HR Team`,
+      contentRu: `Уважаемый кандидат,
+
+Мы рады предложить вам должность риэлтора (Дубай).
+
+Условия:
+- Комиссия: 10%
+- Дата начала: Гибкая
+- Местоположение: Дубай
+
+Поздравляем с успешным завершением курса и теста!
+
+Мы с нетерпением ждем приветствия вас в нашей команде.
+
+С уважением,
+Команда HR`,
+      status: 'sent',
+      sentAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
+    },
+  })
+
+  console.log('✅ General Offer created')
+
+  // Create candidates with General Offer responses (8-10 candidates)
+  const generalOfferCandidates = [
+    { name: 'Alex', surname: 'Petrov', email: 'alex.petrov@example.com', status: 'pending' },
+    { name: 'Maria', surname: 'Ivanova', email: 'maria.ivanova@example.com', status: 'pending' },
+    { name: 'Dmitry', surname: 'Sokolov', email: 'dmitry.sokolov@example.com', status: 'pending' },
+    { name: 'Elena', surname: 'Kozlova', email: 'elena.kozlova@example.com', status: 'pending' },
+    { name: 'Sergey', surname: 'Volkov', email: 'sergey.volkov@example.com', status: 'accepted' },
+    { name: 'Anna', surname: 'Morozova', email: 'anna.morozova@example.com', status: 'accepted' },
+    { name: 'Pavel', surname: 'Novikov', email: 'pavel.novikov@example.com', status: 'declined' },
+    { name: 'Olga', surname: 'Fedorova', email: 'olga.fedorova@example.com', status: 'declined' },
+    { name: 'Igor', surname: 'Medvedev', email: 'igor.medvedev@example.com', status: 'accepted' },
+    { name: 'Natalia', surname: 'Pavlova', email: 'natalia.pavlova@example.com', status: 'pending' },
+  ]
+
+  for (const candidateData of generalOfferCandidates) {
+    // Create user
+    const user = await prisma.user.create({
+      data: {
+        email: candidateData.email,
+        password: hashedPassword,
+        name: candidateData.name,
+        surname: candidateData.surname,
+        role: UserRole.CANDIDATE,
+        language: Language.EN,
+      },
+    })
+
+    // Create candidate profile
+    const profile = await prisma.candidateProfile.create({
+      data: {
+        userId: user.id,
+        city: 'Dubai',
+        country: 'UAE',
+        experience: Math.floor(Math.random() * 5),
+        languages: ['English', 'Russian'],
+        status: candidateData.status === 'accepted' 
+          ? CandidateStatus.HIRED 
+          : candidateData.status === 'declined'
+          ? CandidateStatus.OFFER_DECLINED
+          : CandidateStatus.OFFER_SENT,
+        currentVacancyId: vacancyRealtor.id,
+        mentorId: mentor.id,
+        registrationSourceId: sourceLinkedIn.id,
+      },
+    })
+
+    // Assign course and complete it
+    await prisma.candidateCourse.create({
+      data: {
+        candidateId: profile.id,
+        courseId: courseRealtor.id,
+        progress: 100,
+        startedAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
+        completedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+      },
+    })
+
+    // Complete test
+    await prisma.candidateTest.create({
+      data: {
+        candidateId: profile.id,
+        testId: test1.id,
+        status: 'completed',
+        score: 85,
+        startedAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000),
+        completedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      },
+    })
+
+    // Create personal offer from general offer
+    const personalOffer = await prisma.offer.create({
+      data: {
+        type: 'personal',
+        candidateId: profile.id,
+        vacancyId: null,
+        testId: null,
+        templateId: offerTemplate.id,
+        content: generalOffer.content,
+        contentRu: generalOffer.contentRu,
+        status: candidateData.status === 'pending' ? 'sent' : candidateData.status,
+        generalOfferId: generalOffer.id,
+        sentAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        respondedAt: candidateData.status !== 'pending' 
+          ? new Date(Date.now() - Math.random() * 5 * 24 * 60 * 60 * 1000)
+          : null,
+      },
+    })
+
+    // Update user role if accepted
+    if (candidateData.status === 'accepted') {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { role: UserRole.EMPLOYEE },
+      })
+    }
+  }
+
+  console.log('✅ General Offer candidates created')
+
   // Create webinar
   const webinar = await prisma.webinar.create({
     data: {

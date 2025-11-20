@@ -60,6 +60,7 @@ export async function createOfferForCandidate(candidateId: string, testId?: stri
           content: generalOffer.content,
           contentRu: generalOffer.contentRu,
           status: "sent",
+          generalOfferId: generalOffer.id,
         },
       })
 
