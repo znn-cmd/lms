@@ -1,0 +1,9 @@
+Для PWA нужны иконки:
+- icon-192.png (192x192 пикселей)
+- icon-512.png (512x512 пикселей)
+
+Создайте эти файлы в папке public/ или используйте онлайн генератор:
+https://realfavicongenerator.net/
+https://www.pwabuilder.com/imageGenerator
+
+Можно также использовать простые иконки с логотипом LMS платформы.

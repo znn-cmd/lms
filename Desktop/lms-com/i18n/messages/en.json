@@ -1,0 +1,54 @@
+{
+  "common": {
+    "welcome": "Welcome",
+    "dashboard": "Dashboard",
+    "courses": "Courses",
+    "tests": "Tests",
+    "offers": "Offers",
+    "chat": "Chat",
+    "profile": "Profile",
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success"
+  },
+  "candidate": {
+    "dashboard": {
+      "title": "Welcome back",
+      "currentCourse": "Current Course",
+      "testsCompleted": "Tests Completed",
+      "pendingTests": "Pending Tests",
+      "status": "Status"
+    },
+    "courses": {
+      "title": "My Courses",
+      "continueLearning": "Continue Learning",
+      "startCourse": "Start Course",
+      "progress": "Progress",
+      "completed": "Completed",
+      "inProgress": "In Progress"
+    }
+  },
+  "hr": {
+    "dashboard": {
+      "title": "HR Dashboard",
+      "totalCandidates": "Total Candidates",
+      "activeVacancies": "Active Vacancies",
+      "hired": "Hired"
+    },
+    "vacancies": {
+      "title": "Vacancies",
+      "createVacancy": "Create Vacancy",
+      "manage": "Manage",
+      "registrationLinks": "Registration Links"
+    }
+  }
+}
+

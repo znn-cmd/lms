@@ -1,0 +1,54 @@
+{
+  "common": {
+    "welcome": "Добро пожаловать",
+    "dashboard": "Панель управления",
+    "courses": "Курсы",
+    "tests": "Тесты",
+    "offers": "Предложения",
+    "chat": "Чат",
+    "profile": "Профиль",
+    "signIn": "Войти",
+    "signOut": "Выйти",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "create": "Создать",
+    "search": "Поиск",
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "success": "Успешно"
+  },
+  "candidate": {
+    "dashboard": {
+      "title": "Добро пожаловать",
+      "currentCourse": "Текущий курс",
+      "testsCompleted": "Тесты завершены",
+      "pendingTests": "Ожидающие тесты",
+      "status": "Статус"
+    },
+    "courses": {
+      "title": "Мои курсы",
+      "continueLearning": "Продолжить обучение",
+      "startCourse": "Начать курс",
+      "progress": "Прогресс",
+      "completed": "Завершено",
+      "inProgress": "В процессе"
+    }
+  },
+  "hr": {
+    "dashboard": {
+      "title": "Панель HR",
+      "totalCandidates": "Всего кандидатов",
+      "activeVacancies": "Активные вакансии",
+      "hired": "Нанято"
+    },
+    "vacancies": {
+      "title": "Вакансии",
+      "createVacancy": "Создать вакансию",
+      "manage": "Управление",
+      "registrationLinks": "Ссылки для регистрации"
+    }
+  }
+}
+

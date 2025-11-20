@@ -1,0 +1,550 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  CANDIDATE
+  MENTOR
+  HR
+  ADMIN
+  EMPLOYEE
+}
+
+enum CandidateStatus {
+  REGISTERED
+  PROFILE_COMPLETED
+  IN_COURSE
+  TEST_COMPLETED
+  OFFER_SENT
+  OFFER_ACCEPTED
+  OFFER_DECLINED
+  HIRED
+  REJECTED
+  IN_TALENT_POOL
+}
+
+enum LessonType {
+  VIDEO
+  AUDIO
+  PDF
+  TEXT
+  WEBINAR_RECORDING
+  PRACTICAL_TASK
+  EXTERNAL_LINK
+}
+
+enum QuestionType {
+  SINGLE_CHOICE
+  MULTIPLE_CHOICE
+  OPEN_ANSWER
+  MATCH
+  SORTING
+  CASE_BASED
+}
+
+enum NotificationChannel {
+  EMAIL
+  TELEGRAM
+  WHATSAPP
+  INTERNAL
+  PUSH
+}
+
+enum Language {
+  EN
+  RU
+}
+
+model User {
+  id            String       @id @default(cuid())
+  email         String       @unique
+  password      String
+  name          String?
+  surname       String?
+  phone         String?
+  role          UserRole     @default(CANDIDATE)
+  language      Language     @default(EN)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  // Candidate fields
+  candidateProfile CandidateProfile?
+  chatMessages     ChatMessage[]
+  notifications    Notification[]
+
+  // Mentor fields
+  mentorCandidates  CandidateProfile[] @relation("MentorCandidates")
+  mentorTests      TestReview[]
+
+  // HR/Admin fields
+  createdVacancies Vacancy[] @relation("CreatedBy")
+  createdCourses   Course[]  @relation("CreatedBy")
+  auditLogs        AuditLog[]
+}
+
+model CandidateProfile {
+  id              String          @id @default(cuid())
+  userId          String          @unique
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  city            String?
+  country         String?
+  experience      Int?            // years
+  languages       String[]        // array of languages
+  resumeUrl       String?
+  resumeLink      String?         // HH/LinkedIn/Google Drive
+  additionalInfo  String?         // JSON for additional questions
+  
+  status          CandidateStatus @default(REGISTERED)
+  currentVacancyId String?
+  currentVacancy  Vacancy?       @relation(fields: [currentVacancyId], references: [id])
+  
+  mentorId        String?
+  mentor          User?           @relation("MentorCandidates", fields: [mentorId], references: [id])
+  
+  registrationSourceId String?
+  registrationSource RegistrationSource? @relation(fields: [registrationSourceId], references: [id])
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  courses         CandidateCourse[]
+  tests           CandidateTest[]
+  offers          Offer[]
+  webinarRegistrations WebinarRegistration[]
+}
+
+model RegistrationSource {
+  id              String          @id @default(cuid())
+  name            String          // Channel name (e.g., "LinkedIn", "HH.ru")
+  uniqueLink      String          @unique
+  vacancyId       String
+  vacancy         Vacancy         @relation(fields: [vacancyId], references: [id], onDelete: Cascade)
+  
+  registrations   Int             @default(0)
+  completions     Int             @default(0)
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  candidates      CandidateProfile[]
+}
+
+model Vacancy {
+  id              String          @id @default(cuid())
+  title           String
+  titleRu         String?
+  description     String?
+  descriptionRu   String?
+  
+  scoreThreshold  Int             // Minimum score to pass
+  startCourseId   String?         // Initial course to assign
+  startCourse     Course?         @relation("StartCourse", fields: [startCourseId], references: [id])
+  
+  // Transition scenarios
+  rejectionScenario   String?     // JSON
+  internScenario      String?     // JSON
+  realtorScenario     String?     // JSON
+  otherRoleScenario   String?     // JSON
+  
+  isActive        Boolean         @default(true)
+  createdById     String
+  createdBy       User            @relation("CreatedBy", fields: [createdById], references: [id])
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  candidates      CandidateProfile[]
+  sources         RegistrationSource[]
+  courses         Course[]        @relation("VacancyCourses")
+  offers          Offer[]
+  tests           Test[]
+}
+
+model Course {
+  id              String          @id @default(cuid())
+  title           String
+  titleRu         String?
+  description     String?
+  descriptionRu   String?
+  
+  language        Language        @default(EN)
+  isSequential    Boolean         @default(true) // Require sequential completion
+  isActive        Boolean         @default(true)
+  
+  createdById     String
+  createdBy       User            @relation("CreatedBy", fields: [createdById], references: [id])
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  modules         Module[]
+  candidateCourses CandidateCourse[]
+  tests           Test[]
+  vacancies       Vacancy[]       @relation("VacancyCourses")
+  startVacancies  Vacancy[]       @relation("StartCourse")
+}
+
+model Module {
+  id              String          @id @default(cuid())
+  courseId        String
+  course          Course          @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  title           String
+  titleRu         String?
+  description     String?
+  descriptionRu   String?
+  
+  order           Int             @default(0)
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  lessons         Lesson[]
+}
+
+model Lesson {
+  id              String          @id @default(cuid())
+  moduleId        String
+  module          Module          @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  
+  title           String
+  titleRu         String?
+  description     String?
+  descriptionRu   String?
+  
+  type            LessonType
+  content         String?         // JSON or URL depending on type
+  contentRu       String?
+  duration        Int?            // minutes
+  
+  order           Int             @default(0)
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  progress        LessonProgress[]
+}
+
+model CandidateCourse {
+  id              String          @id @default(cuid())
+  candidateId     String
+  candidate       CandidateProfile @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  
+  courseId        String
+  course          Course          @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  progress        Int             @default(0) // percentage
+  startedAt       DateTime?
+  completedAt     DateTime?
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  lessonProgress  LessonProgress[]
+}
+
+model LessonProgress {
+  id              String          @id @default(cuid())
+  candidateCourseId String
+  candidateCourse CandidateCourse @relation(fields: [candidateCourseId], references: [id], onDelete: Cascade)
+  
+  lessonId        String
+  lesson          Lesson          @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  
+  isCompleted     Boolean         @default(false)
+  completedAt     DateTime?
+  timeSpent       Int?            // minutes
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@unique([candidateCourseId, lessonId])
+}
+
+model Test {
+  id              String          @id @default(cuid())
+  title           String
+  titleRu         String?
+  description     String?
+  descriptionRu   String?
+  
+  courseId        String?         // Optional: can be standalone
+  course          Course?         @relation(fields: [courseId], references: [id])
+  
+  vacancyId       String?         // Optional: can be attached to vacancy
+  vacancy         Vacancy?        @relation(fields: [vacancyId], references: [id])
+  
+  passingScore    Int             // percentage
+  timeLimit       Int?            // minutes
+  
+  isActive        Boolean         @default(true)
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  questions       Question[]
+  candidateTests  CandidateTest[]
+  offers          Offer[]
+}
+
+model Question {
+  id              String          @id @default(cuid())
+  testId          String
+  test            Test            @relation(fields: [testId], references: [id], onDelete: Cascade)
+  
+  text            String
+  textRu          String?
+  type            QuestionType
+  
+  options         String[]        // JSON array for choices
+  optionsRu       String[]        @default([]) // JSON array for choices (RU)
+  correctAnswer   String?         // JSON - depends on type
+  correctAnswerRu String?
+  
+  points          Int             @default(1)
+  order           Int             @default(0)
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  answers         Answer[]
+}
+
+model CandidateTest {
+  id              String          @id @default(cuid())
+  candidateId     String
+  candidate       CandidateProfile @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  
+  testId         String
+  test           Test             @relation(fields: [testId], references: [id], onDelete: Cascade)
+  
+  score          Int?             // percentage
+  startedAt      DateTime?
+  completedAt    DateTime?
+  timeSpent      Int?             // minutes
+  
+  status        String           @default("pending") // pending, in_progress, completed, reviewed
+  
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  answers       Answer[]
+  reviews       TestReview[]
+}
+
+model Answer {
+  id              String          @id @default(cuid())
+  candidateTestId String
+  candidateTest   CandidateTest   @relation(fields: [candidateTestId], references: [id], onDelete: Cascade)
+  
+  questionId     String
+  question       Question         @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  
+  answer         String           // JSON - depends on question type
+  isCorrect      Boolean?
+  points         Int?             @default(0)
+  
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@unique([candidateTestId, questionId])
+}
+
+model TestReview {
+  id              String          @id @default(cuid())
+  candidateTestId String
+  candidateTest   CandidateTest   @relation(fields: [candidateTestId], references: [id], onDelete: Cascade)
+  
+  reviewerId     String
+  reviewer       User             @relation(fields: [reviewerId], references: [id])
+  
+  comment        String?
+  manualScore    Int?             // Override score for open answers
+  
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+}
+
+model Offer {
+  id              String          @id @default(cuid())
+  
+  type            String          @default("personal") // personal, general
+  candidateId     String?         // Required for personal offers
+  candidate       CandidateProfile? @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  
+  vacancyId      String?          // Required for general offers
+  vacancy        Vacancy?         @relation(fields: [vacancyId], references: [id])
+  
+  testId         String?          // Optional: test that triggers this offer (for general offers)
+  test           Test?            @relation(fields: [testId], references: [id])
+  
+  templateId     String?
+  template       OfferTemplate?   @relation(fields: [templateId], references: [id])
+  
+  content        String           // Rendered content
+  contentRu      String?
+  
+  status         String           @default("sent") // sent, accepted, declined
+  
+  sentAt         DateTime         @default(now())
+  respondedAt    DateTime?
+  
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+}
+
+model OfferTemplate {
+  id              String          @id @default(cuid())
+  name            String
+  nameRu          String?
+  
+  content         String           // Template with variables
+  contentRu       String?
+  
+  variables       String[]         // Available variables
+  
+  isActive        Boolean         @default(true)
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  offers          Offer[]
+}
+
+model Webinar {
+  id              String          @id @default(cuid())
+  title           String
+  titleRu         String?
+  description     String?
+  descriptionRu   String?
+  
+  startDate       DateTime
+  endDate         DateTime?
+  duration        Int?            // minutes
+  
+  meetingLink     String?         // Zoom/Teams link
+  recordingUrl    String?
+  
+  maxParticipants Int?
+  isActive        Boolean         @default(true)
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  registrations   WebinarRegistration[]
+}
+
+model WebinarRegistration {
+  id              String          @id @default(cuid())
+  webinarId       String
+  webinar         Webinar         @relation(fields: [webinarId], references: [id], onDelete: Cascade)
+  
+  candidateId     String
+  candidate       CandidateProfile @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  
+  registeredAt    DateTime        @default(now())
+  attended        Boolean         @default(false)
+  
+  @@unique([webinarId, candidateId])
+}
+
+model KnowledgeBase {
+  id              String          @id @default(cuid())
+  title           String
+  titleRu         String?
+  content         String?
+  contentRu       String?
+  
+  parentId       String?
+  parent         KnowledgeBase?  @relation("KnowledgeBaseTree", fields: [parentId], references: [id])
+  children       KnowledgeBase[] @relation("KnowledgeBaseTree")
+  
+  type           String          // article, document, video
+  fileUrl        String?
+  tags           String[]
+  
+  lessonId       String?         // Optional link to lesson
+  
+  order          Int             @default(0)
+  
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model Trigger {
+  id              String          @id @default(cuid())
+  name            String
+  event           String          // Event type
+  conditions      String?         // JSON conditions
+  
+  channels        NotificationChannel[]
+  template        String?         // Notification template
+  
+  isActive        Boolean         @default(true)
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model Notification {
+  id              String          @id @default(cuid())
+  userId          String
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  title           String
+  message         String
+  type            String          // info, success, warning, error
+  
+  channel        NotificationChannel
+  isRead          Boolean         @default(false)
+  
+  relatedId       String?         // Related entity ID
+  relatedType     String?         // Entity type
+  
+  createdAt       DateTime        @default(now())
+  readAt          DateTime?
+}
+
+model ChatMessage {
+  id              String          @id @default(cuid())
+  senderId        String
+  sender          User            @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  
+  receiverId      String?         // For direct messages
+  candidateId     String?         // For candidate-mentor chat
+  mentorId        String?         // For candidate-mentor chat
+  
+  content         String
+  attachments     String[]        // URLs
+  
+  isRead          Boolean         @default(false)
+  
+  createdAt       DateTime        @default(now())
+  readAt          DateTime?
+}
+
+model AuditLog {
+  id              String          @id @default(cuid())
+  userId          String
+  user            User            @relation(fields: [userId], references: [id])
+  
+  action          String
+  entityType      String
+  entityId        String?
+  changes         String?         // JSON
+  
+  ipAddress       String?
+  userAgent       String?
+  
+  createdAt       DateTime        @default(now())
+}
+
