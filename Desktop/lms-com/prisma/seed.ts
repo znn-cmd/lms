@@ -744,22 +744,24 @@ HR Team`,
           let answerValue: any = null
           let isCorrect: boolean | null = null
           let points = 0
+          const score = testScore ?? 0
+          const passed = score >= test1.passingScore
 
           if (question.type === QuestionType.SINGLE_CHOICE) {
-            answerValue = testScore >= test1.passingScore ? question.correctAnswer : question.options[0]
+            answerValue = passed ? question.correctAnswer : question.options[0]
             isCorrect = answerValue === question.correctAnswer
             points = isCorrect ? question.points : 0
           } else if (question.type === QuestionType.MULTIPLE_CHOICE) {
             const correctAnswers = JSON.parse(question.correctAnswer || '[]')
-            answerValue = testScore >= test1.passingScore ? correctAnswers : [question.options[0]]
+            answerValue = passed ? correctAnswers : [question.options[0]]
             isCorrect = JSON.stringify(answerValue.sort()) === JSON.stringify(correctAnswers.sort())
             points = isCorrect ? question.points : 0
           } else {
-            answerValue = testScore >= test1.passingScore
+            answerValue = passed
               ? 'Comprehensive answer demonstrating understanding of the topic.'
               : 'Brief answer'
             isCorrect = null
-            points = testScore >= test1.passingScore ? question.points : Math.floor(question.points * 0.3)
+            points = passed ? question.points : Math.floor(question.points * 0.3)
           }
 
           await prisma.answer.create({
