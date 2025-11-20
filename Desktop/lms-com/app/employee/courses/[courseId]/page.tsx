@@ -32,7 +32,11 @@ export default async function EmployeeCoursePage({
 
   const course = await prisma.course.findUnique({
     where: { id: params.courseId },
-    include: {
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      sequentialCompletion: true,
       modules: {
         include: {
           lessons: {
