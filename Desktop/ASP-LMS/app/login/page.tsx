@@ -28,7 +28,13 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || t('auth.error'));
+        // Map error codes to translation keys
+        const errorMap: Record<string, string> = {
+          'INVALID_CREDENTIALS': t('auth.invalidCredentials'),
+          'MISSING_CREDENTIALS': t('auth.missingCredentials'),
+          'SERVER_ERROR': t('auth.serverError'),
+        };
+        setError(errorMap[data.error] || t('auth.error'));
         setLoading(false);
         return;
       }

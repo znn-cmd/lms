@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
 
     if (!username || !password) {
       return NextResponse.json(
-        { error: 'Имя пользователя и пароль обязательны' },
+        { error: 'MISSING_CREDENTIALS' },
         { status: 400 }
       );
     }
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json(
-        { error: 'Неверное имя пользователя или пароль' },
+        { error: 'INVALID_CREDENTIALS' },
         { status: 401 }
       );
     }
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json(
-      { error: 'Внутренняя ошибка сервера' },
+      { error: 'SERVER_ERROR' },
       { status: 500 }
     );
   }
