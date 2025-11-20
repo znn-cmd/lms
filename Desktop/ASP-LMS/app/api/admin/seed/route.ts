@@ -8,26 +8,12 @@ const prisma = new PrismaClient();
  * API endpoint to seed the database
  * WARNING: This should be protected in production!
  * 
- * Usage: POST /api/admin/seed
- * 
- * For security, you can add a secret token:
- * POST /api/admin/seed?token=YOUR_SECRET_TOKEN
+ * Usage: 
+ * - GET /api/admin/seed?token=YOUR_SECRET_TOKEN (for browser)
+ * - POST /api/admin/seed?token=YOUR_SECRET_TOKEN (for API calls)
  */
-export async function POST(request: NextRequest) {
-  try {
-    // Optional: Add security token check
-    const searchParams = request.nextUrl.searchParams;
-    const token = searchParams.get('token');
-    const expectedToken = process.env.SEED_TOKEN || 'seed-me-please';
-
-    if (token !== expectedToken) {
-      return NextResponse.json(
-        { error: 'Unauthorized. Provide ?token=YOUR_SECRET_TOKEN' },
-        { status: 401 }
-      );
-    }
-
-    console.log('🌱 Starting database seed...');
+async function seedDatabase() {
+  console.log('🌱 Starting database seed...');
 
     // Очистка базы данных
     await prisma.attempt.deleteMany();
@@ -244,7 +230,7 @@ export async function POST(request: NextRequest) {
 
     await prisma.$disconnect();
 
-    return NextResponse.json({
+    return {
       success: true,
       message: 'Database seeded successfully',
       users: {
@@ -252,10 +238,56 @@ export async function POST(request: NextRequest) {
         hr: hr.username,
       },
       course: course.title,
-    });
+    };
   } catch (error: any) {
     console.error('Seed error:', error);
     await prisma.$disconnect();
+    throw error;
+  }
+}
+
+export async function GET(request: NextRequest) {
+  try {
+    const searchParams = request.nextUrl.searchParams;
+    const token = searchParams.get('token');
+    const expectedToken = process.env.SEED_TOKEN || 'seed-me-please';
+
+    if (token !== expectedToken) {
+      return NextResponse.json(
+        { error: 'Unauthorized. Provide ?token=YOUR_SECRET_TOKEN' },
+        { status: 401 }
+      );
+    }
+
+    const result = await seedDatabase();
+    return NextResponse.json(result);
+  } catch (error: any) {
+    return NextResponse.json(
+      {
+        error: 'Failed to seed database',
+        details: error.message,
+      },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const searchParams = request.nextUrl.searchParams;
+    const token = searchParams.get('token');
+    const expectedToken = process.env.SEED_TOKEN || 'seed-me-please';
+
+    if (token !== expectedToken) {
+      return NextResponse.json(
+        { error: 'Unauthorized. Provide ?token=YOUR_SECRET_TOKEN' },
+        { status: 401 }
+      );
+    }
+
+    const result = await seedDatabase();
+    return NextResponse.json(result);
+  } catch (error: any) {
     return NextResponse.json(
       {
         error: 'Failed to seed database',
