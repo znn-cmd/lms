@@ -36,7 +36,7 @@ export default async function EmployeeCoursePage({
       id: true,
       title: true,
       description: true,
-      sequentialCompletion: true,
+      isSequential: true,
       modules: {
         include: {
           lessons: {
@@ -85,7 +85,7 @@ export default async function EmployeeCoursePage({
   const progress = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0
 
   // Check if course is sequential
-  const isSequential = course.sequentialCompletion
+  const isSequential = course.isSequential
 
   return (
     <div className="flex min-h-screen">
