@@ -170,7 +170,7 @@ export function OffersKanban({ offers }: { offers: Offer[] }) {
                                 Test: {offer.test.title}
                               </p>
                             )}
-                            {offer.type === "personal" && offer.generalOfferId && (
+                            {offer.type === "personal" && (offer as any).generalOfferId && (
                               <p className="text-xs text-blue-600 font-medium">
                                 From General Offer
                                 {offer.generalOffer?.vacancy && ` (${offer.generalOffer.vacancy.title})`}
