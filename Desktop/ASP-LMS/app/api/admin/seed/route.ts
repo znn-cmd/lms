@@ -13,7 +13,8 @@ const prisma = new PrismaClient();
  * - POST /api/admin/seed?token=YOUR_SECRET_TOKEN (for API calls)
  */
 async function seedDatabase() {
-  console.log('🌱 Starting database seed...');
+  try {
+    console.log('🌱 Starting database seed...');
 
     // Очистка базы данных
     await prisma.attempt.deleteMany();
