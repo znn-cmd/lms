@@ -23,14 +23,10 @@ export async function GET(request: NextRequest) {
           },
         },
         mentor: {
-          include: {
-            user: {
-              select: {
-                name: true,
-                surname: true,
-                id: true,
-              },
-            },
+          select: {
+            name: true,
+            surname: true,
+            id: true,
           },
         },
         currentVacancy: {
