@@ -66,7 +66,7 @@ export async function authenticateUser(username: string, password: string): Prom
   return {
     id: user.id,
     username: user.username,
-    role: user.role,
+    role: user.role as 'STUDENT' | 'HR',
     fullName: user.fullName,
   };
 }
