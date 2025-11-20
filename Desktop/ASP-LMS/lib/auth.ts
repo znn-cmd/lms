@@ -58,10 +58,16 @@ export async function authenticateUser(username: string, password: string): Prom
     where: { username },
   });
 
-  if (!user) return null;
+  if (!user) {
+    console.log('User not found:', username);
+    return null;
+  }
 
   const isValid = await verifyPassword(password, user.passwordHash);
-  if (!isValid) return null;
+  if (!isValid) {
+    console.log('Password verification failed for user:', username);
+    return null;
+  }
 
   return {
     id: user.id,
