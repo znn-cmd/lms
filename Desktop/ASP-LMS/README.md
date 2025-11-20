@@ -5,11 +5,11 @@
 ## Технологии
 
 - **Next.js 14** (App Router) с TypeScript
-- **Prisma** с SQLite для локального хранения данных
+- **Prisma** с SQLite (локально) / PostgreSQL (Vercel)
 - **Tailwind CSS** для стилизации
 - **JWT** для аутентификации через cookies
 
-## Быстрый старт
+## Быстрый старт (локально)
 
 ### 1. Установка зависимостей
 
@@ -20,7 +20,7 @@ npm install
 ### 2. Настройка базы данных
 
 ```bash
-# Создание миграций и базы данных
+# Создание миграций и базы данных (SQLite)
 npx prisma migrate dev
 
 # Заполнение базы тестовыми данными
@@ -44,6 +44,48 @@ npm run dev
 ### HR (Администратор)
 - **Логин:** `hr`
 - **Пароль:** `hr`
+
+## Деплой на Vercel
+
+⚠️ **Важно**: SQLite не работает на Vercel (serverless функции). Для деплоя нужно использовать PostgreSQL.
+
+### Быстрая инструкция:
+
+1. **Создайте Vercel Postgres:**
+   - Зайдите на [Vercel Dashboard](https://vercel.com/dashboard) → Storage → Create Database → Postgres
+   - Скопируйте Connection String
+
+2. **Подключите репозиторий к Vercel:**
+   - Add New Project → Import `znn-cmd/lms`
+   - Vercel автоматически определит Next.js
+
+3. **Настройте переменные окружения:**
+   - `DATABASE_URL` - строка подключения к Vercel Postgres
+   - `JWT_SECRET` - любой случайный секретный ключ
+
+4. **Обновите схему Prisma для PostgreSQL:**
+   ```bash
+   # Замените содержимое prisma/schema.prisma на prisma/schema.postgres.prisma
+   # Или используйте скрипт:
+   npm run switch:postgres
+   ```
+
+5. **Запушьте изменения:**
+   ```bash
+   git add prisma/schema.prisma
+   git commit -m "Switch to PostgreSQL for Vercel"
+   git push
+   ```
+
+6. **После деплоя заполните базу данных:**
+   ```bash
+   # Используйте Vercel CLI
+   vercel env pull .env.local
+   npx prisma migrate deploy
+   npm run db:seed
+   ```
+
+Подробная инструкция в [VERCEL_SETUP.md](./VERCEL_SETUP.md)
 
 ## Функционал
 
@@ -149,8 +191,11 @@ npm run db:seed
 
 ## Примечания
 
-- Все данные хранятся локально в SQLite
-- Аутентификация через JWT в httpOnly cookies
+- Локально: SQLite для быстрой разработки
+- Production (Vercel): PostgreSQL (Vercel Postgres или внешний провайдер)
 - Пароли хешируются с помощью bcrypt
-- Приложение полностью работает без внешних сервисов
+- Аутентификация через JWT в httpOnly cookies
 
+## Репозиторий
+
+GitHub: https://github.com/znn-cmd/lms
