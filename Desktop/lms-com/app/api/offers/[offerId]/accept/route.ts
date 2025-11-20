@@ -85,7 +85,7 @@ export async function POST(
         data: {
           userId: hrUser.id,
           title: "Offer Accepted",
-          message: `${candidate.user.name} ${candidate.user.surname} has accepted the offer for ${offer.vacancy.title}`,
+          message: `${candidate.user.name} ${candidate.user.surname} has accepted the offer${offer.vacancy ? ` for ${offer.vacancy.title}` : ''}`,
           type: "success",
           channel: "INTERNAL",
           relatedId: offer.id,

@@ -77,7 +77,7 @@ export async function POST(
         data: {
           userId: hrUser.id,
           title: "Offer Declined",
-          message: `${candidate.user.name} ${candidate.user.surname} has declined the offer for ${offer.vacancy.title}. Candidate moved to talent pool.`,
+          message: `${candidate.user.name} ${candidate.user.surname} has declined the offer${offer.vacancy ? ` for ${offer.vacancy.title}` : ''}. Candidate moved to talent pool.`,
           type: "warning",
           channel: "INTERNAL",
           relatedId: offer.id,
