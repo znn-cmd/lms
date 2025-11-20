@@ -24,6 +24,7 @@ export default function EditOfferPage() {
   const [vacancies, setVacancies] = useState<any[]>([])
   const [tests, setTests] = useState<any[]>([])
   const [templates, setTemplates] = useState<any[]>([])
+  const [offerType, setOfferType] = useState<string>("personal")
   const [formData, setFormData] = useState({
     candidateId: "",
     vacancyId: "",
@@ -47,6 +48,7 @@ export default function EditOfferPage() {
       setTemplates(templatesData.templates || [])
       
       if (offerData.offer) {
+        setOfferType(offerData.offer.type || "personal")
         setFormData({
           candidateId: offerData.offer.candidateId || "",
           vacancyId: offerData.offer.vacancyId || "",
@@ -69,7 +71,7 @@ export default function EditOfferPage() {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          type: offerData.offer?.type || "personal",
+          type: offerType,
           candidateId: formData.candidateId || null,
           vacancyId: formData.vacancyId || null,
           testId: formData.testId && formData.testId !== "none" ? formData.testId : null,
