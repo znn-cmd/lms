@@ -104,7 +104,7 @@ export default async function EmployeeDashboard() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-700">
-                    You have accepted the offer for <strong>{candidate.offers[0].vacancy.title}</strong>.
+                    You have accepted the offer{candidate.offers[0].vacancy ? ` for <strong>${candidate.offers[0].vacancy.title}</strong>` : ''}.
                     Welcome to the team!
                   </p>
                 </CardContent>
@@ -239,7 +239,7 @@ export default async function EmployeeDashboard() {
                       <div>
                         <p className="font-medium">Offer Accepted</p>
                         <p className="text-sm text-muted-foreground">
-                          {candidate.offers[0].vacancy.title} •{" "}
+                          {candidate.offers[0].vacancy?.title || "Job Offer"} •{" "}
                           {candidate.offers[0].respondedAt
                             ? new Date(candidate.offers[0].respondedAt).toLocaleDateString()
                             : "Pending"}
