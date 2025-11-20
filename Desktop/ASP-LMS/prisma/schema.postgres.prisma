@@ -1,0 +1,98 @@
+// This is your Prisma schema file for PostgreSQL (Vercel)
+// Use this schema for production deployment on Vercel
+// Rename to schema.prisma before deploying
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String       @id @default(cuid())
+  username       String       @unique
+  passwordHash   String
+  role           String       // 'STUDENT' | 'HR'
+  fullName       String
+  status         String       @default("NEW") // 'NEW' | 'COURSE_IN_PROGRESS' | 'QUIZ_PENDING' | 'QUIZ_COMPLETED' | 'REJECTED' | 'OFFER_TRAINEE' | 'OFFER_REALTOR' | 'HIRED_TRAINEE' | 'HIRED_REALTOR' | 'OFFER_DECLINED'
+  score          Int?
+  offerStatus    String       @default("NONE") // 'NONE' | 'SENT' | 'ACCEPTED' | 'DECLINED'
+  activeCourseId String?
+  activeCourse   Course?      @relation("ActiveCourse", fields: [activeCourseId], references: [id])
+  attempts       Attempt[]
+  createdCourses Course[]     @relation("CreatedCourses")
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model Course {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  isActive    Boolean   @default(true)
+  createdByUserId String
+  createdBy   User      @relation("CreatedCourses", fields: [createdByUserId], references: [id])
+  lessons     Lesson[]
+  quiz        Quiz?
+  activeUsers User[]    @relation("ActiveCourse")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Lesson {
+  id        String   @id @default(cuid())
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title     String
+  content   String
+  order     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([courseId])
+}
+
+model Quiz {
+  id          String     @id @default(cuid())
+  courseId    String     @unique
+  course      Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title       String
+  description String
+  questions   Question[]
+  attempts    Attempt[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Question {
+  id                String   @id @default(cuid())
+  quizId            String
+  quiz              Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  text              String
+  options           String   // JSON array of strings
+  correctOptionIndex Int
+  weight            Int      @default(10)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([quizId])
+}
+
+model Attempt {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quizId    String
+  quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answers   String   // JSON array of selected option indices
+  score     Int
+  status    String   @default("COMPLETED") // 'COMPLETED'
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([quizId])
+}
+
