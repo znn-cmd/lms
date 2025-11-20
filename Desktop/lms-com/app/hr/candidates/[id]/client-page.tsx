@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { Edit } from "lucide-react"
 import { EditCandidateForm } from "./edit-form"
 import { CandidateActions } from "./actions"
 
