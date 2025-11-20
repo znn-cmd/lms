@@ -40,13 +40,14 @@ export default async function OffersPage() {
     orderBy: { createdAt: "desc" },
   })
 
-  // Fetch generalOffer separately if generalOfferId exists (after migration)
+  // Fetch generalOffer separately if generalOfferId exists
   const offersWithGeneralOffer = await Promise.all(
     offers.map(async (offer) => {
-      if ((offer as any).generalOfferId) {
+      const generalOfferId = (offer as any).generalOfferId
+      if (generalOfferId) {
         try {
           const generalOffer = await prisma.offer.findUnique({
-            where: { id: (offer as any).generalOfferId },
+            where: { id: generalOfferId },
             select: {
               id: true,
               vacancy: {
@@ -58,7 +59,7 @@ export default async function OffersPage() {
           })
           return { ...offer, generalOffer }
         } catch (error) {
-          // Column doesn't exist yet, skip
+          // If column doesn't exist or offer not found, skip
           return { ...offer, generalOffer: null }
         }
       }
