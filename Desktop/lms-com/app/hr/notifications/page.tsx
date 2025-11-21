@@ -50,15 +50,15 @@ export default async function NotificationsPage() {
           <div className="max-w-4xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Notifications</h1>
+                <h1 className="text-3xl font-bold text-gray-900">{t("common.notifications", locale)}</h1>
                 <p className="text-gray-600 mt-2">
-                  {unreadCount > 0 ? `${unreadCount} unread notifications` : "All caught up!"}
+                  {unreadCount > 0 ? `${unreadCount} ${t("common.unreadNotifications", locale)}` : t("common.allCaughtUp", locale)}
                 </p>
               </div>
               <Link href="/hr/notifications/bulk">
                 <Button>
                   <Send className="w-4 h-4 mr-2" />
-                  Send Bulk Notification
+                  {t("common.sendBulkNotification", locale)}
                 </Button>
               </Link>
             </div>
@@ -99,9 +99,9 @@ export default async function NotificationsPage() {
                 <Card>
                   <CardContent className="py-12 text-center">
                     <Bell className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">No notifications</h3>
+                    <h3 className="text-lg font-semibold mb-2">{t("common.noNotifications", locale)}</h3>
                     <p className="text-muted-foreground">
-                      You're all caught up! New notifications will appear here.
+                      {t("common.noNotificationsDesc", locale)}
                     </p>
                   </CardContent>
                 </Card>

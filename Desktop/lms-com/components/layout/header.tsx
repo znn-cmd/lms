@@ -12,10 +12,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useLocale } from "@/hooks/use-locale"
+import { t } from "@/lib/i18n"
 
 export function Header() {
   const { data: session } = useSession()
   const user = session?.user
+  const locale = useLocale()
 
   return (
     <header className="h-16 bg-white border-b border-gray-200 fixed top-0 right-0 left-64 z-10">
@@ -40,15 +43,15 @@ export function Header() {
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <User className="mr-2 h-4 w-4" />
-                <span>Profile</span>
+                <span>{t("common.profile", locale)}</span>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <span>Settings</span>
+                <span>{t("common.settings", locale)}</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => signOut()}>
                 <LogOut className="mr-2 h-4 w-4" />
-                <span>Log out</span>
+                <span>{t("common.logOut", locale)}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

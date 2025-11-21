@@ -11,8 +11,11 @@ import dayGridPlugin from "@fullcalendar/daygrid"
 import timeGridPlugin from "@fullcalendar/timegrid"
 import interactionPlugin from "@fullcalendar/interaction"
 import Link from "next/link"
+import { useLocale } from "@/hooks/use-locale"
+import { t } from "@/lib/i18n"
 
 export default function WebinarsPage() {
+  const locale = useLocale()
   const [events, setEvents] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -46,13 +49,13 @@ export default function WebinarsPage() {
           <div className="max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Webinars</h1>
-                <p className="text-gray-600 mt-2">Schedule and manage webinars</p>
+                <h1 className="text-3xl font-bold text-gray-900">{t("common.webinars", locale)}</h1>
+                <p className="text-gray-600 mt-2">{t("common.scheduleAndManageWebinars", locale)}</p>
               </div>
               <Link href="/hr/webinars/new">
                 <Button>
                   <Plus className="w-4 h-4 mr-2" />
-                  Create Webinar
+                  {t("common.createWebinar", locale)}
                 </Button>
               </Link>
             </div>
@@ -60,7 +63,7 @@ export default function WebinarsPage() {
             <Card>
               <CardContent className="p-6">
                 {loading ? (
-                  <div>Loading calendar...</div>
+                  <div>{t("common.loadingCalendar", locale)}</div>
                 ) : (
                   <FullCalendar
                     plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}

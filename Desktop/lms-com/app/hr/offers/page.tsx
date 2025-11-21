@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button"
 import { FileCheck, Plus } from "lucide-react"
 import Link from "next/link"
 import { OffersKanban } from "./kanban"
+import { getLocale } from "@/lib/get-locale"
+import { t } from "@/lib/i18n"
 
 export default async function OffersPage() {
   const session = await getServerSession(authOptions)
@@ -16,6 +18,8 @@ export default async function OffersPage() {
   if (!session || !["HR", "ADMIN"].includes((session.user as any)?.role)) {
     redirect("/auth/signin")
   }
+
+  const locale = await getLocale()
 
   const offers = await prisma.offer.findMany({
     include: {
@@ -93,8 +97,8 @@ export default async function OffersPage() {
           <div className="max-w-full mx-auto space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Offers</h1>
-                <p className="text-gray-600 mt-2">Manage job offers and responses</p>
+                <h1 className="text-3xl font-bold text-gray-900">{t("hr.offers.title", locale)}</h1>
+                <p className="text-gray-600 mt-2">{t("hr.offers.subtitle", locale)}</p>
               </div>
               <Link href="/hr/offers/new">
                 <Button>

@@ -11,6 +11,8 @@ import { ArrowLeft, Mail, Phone, MapPin, Briefcase, User, GraduationCap, FileTex
 import Link from "next/link"
 import { CandidateActions } from "./actions"
 import { EditCandidateButton } from "./edit-button"
+import { getLocale } from "@/lib/get-locale"
+import { t } from "@/lib/i18n"
 
 export default async function CandidateDetailPage({
   params,
@@ -22,6 +24,8 @@ export default async function CandidateDetailPage({
   if (!session || !["HR", "ADMIN"].includes((session.user as any)?.role)) {
     redirect("/auth/signin")
   }
+
+  const locale = await getLocale()
 
   const [candidate, vacancies] = await Promise.all([
     prisma.candidateProfile.findUnique({
@@ -100,7 +104,7 @@ export default async function CandidateDetailPage({
   ])
 
   if (!candidate) {
-    return <div>Candidate not found</div>
+    return <div>{t("common.candidateNotFound", locale)}</div>
   }
 
   return (
@@ -128,7 +132,7 @@ export default async function CandidateDetailPage({
                   <Link href={`/mentor/chat/${candidate.id}`}>
                     <Button variant="outline">
                       <MessageSquare className="w-4 h-4 mr-2" />
-                      Chat
+                      {t("common.chat", locale)}
                     </Button>
                   </Link>
                 )}
@@ -138,47 +142,47 @@ export default async function CandidateDetailPage({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Profile Information</CardTitle>
+                  <CardTitle>{t("common.profileInformation", locale)}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <p className="text-sm text-muted-foreground">Status</p>
+                    <p className="text-sm text-muted-foreground">{t("common.status", locale)}</p>
                     <p className="font-medium capitalize">{candidate.status.replace("_", " ")}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Vacancy</p>
-                    <p className="font-medium">{candidate.currentVacancy?.title || "None"}</p>
+                    <p className="text-sm text-muted-foreground">{t("common.vacancies", locale)}</p>
+                    <p className="font-medium">{candidate.currentVacancy?.title || t("common.none", locale)}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Registration Source</p>
-                    <p className="font-medium">{candidate.registrationSource?.name || "N/A"}</p>
+                    <p className="text-sm text-muted-foreground">{t("common.registrationSource", locale)}</p>
+                    <p className="font-medium">{candidate.registrationSource?.name || t("common.nA", locale)}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">City</p>
-                    <p className="font-medium">{candidate.city || "N/A"}</p>
+                    <p className="text-sm text-muted-foreground">{t("common.city", locale)}</p>
+                    <p className="font-medium">{candidate.city || t("common.nA", locale)}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Country</p>
-                    <p className="font-medium">{candidate.country || "N/A"}</p>
+                    <p className="text-sm text-muted-foreground">{t("common.country", locale)}</p>
+                    <p className="font-medium">{candidate.country || t("common.nA", locale)}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Experience</p>
-                    <p className="font-medium">{candidate.experience || 0} years</p>
+                    <p className="text-sm text-muted-foreground">{t("common.experience", locale)}</p>
+                    <p className="font-medium">{candidate.experience || 0} {t("common.years", locale)}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Languages</p>
-                    <p className="font-medium">{candidate.languages.join(", ") || "N/A"}</p>
+                    <p className="text-sm text-muted-foreground">{t("common.languages", locale)}</p>
+                    <p className="font-medium">{candidate.languages.join(", ") || t("common.nA", locale)}</p>
                   </div>
                   {candidate.resumeLink && (
                     <div>
-                      <p className="text-sm text-muted-foreground">Resume</p>
+                      <p className="text-sm text-muted-foreground">{t("common.resume", locale)}</p>
                       <a
                         href={candidate.resumeLink}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-primary hover:underline"
                       >
-                        View Resume →
+                        {t("common.viewResume", locale)} →
                       </a>
                     </div>
                   )}
@@ -187,7 +191,7 @@ export default async function CandidateDetailPage({
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Contact Information</CardTitle>
+                  <CardTitle>{t("common.contactInformation", locale)}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-center gap-2">
@@ -196,7 +200,7 @@ export default async function CandidateDetailPage({
                   </div>
                   <div className="flex items-center gap-2">
                     <Phone className="w-4 h-4 text-muted-foreground" />
-                    <span>{candidate.user.phone || "Not provided"}</span>
+                    <span>{candidate.user.phone || t("common.notProvided", locale)}</span>
                   </div>
                   {candidate.city && (
                     <div className="flex items-center gap-2">
@@ -206,7 +210,7 @@ export default async function CandidateDetailPage({
                   )}
                   {candidate.mentor && (
                     <div className="pt-4 border-t">
-                      <p className="text-sm text-muted-foreground mb-2">Mentor</p>
+                      <p className="text-sm text-muted-foreground mb-2">{t("common.yourMentor", locale)}</p>
                       <div className="flex items-center gap-2">
                         <User className="w-4 h-4 text-muted-foreground" />
                         <span>
@@ -221,27 +225,27 @@ export default async function CandidateDetailPage({
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Quick Stats</CardTitle>
+                  <CardTitle>{t("common.quickStats", locale)}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <p className="text-sm text-muted-foreground">Courses Enrolled</p>
+                    <p className="text-sm text-muted-foreground">{t("common.coursesEnrolled", locale)}</p>
                     <p className="text-2xl font-bold">{candidate.courses.length}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Tests Completed</p>
+                    <p className="text-sm text-muted-foreground">{t("common.testsCompleted", locale)}</p>
                     <p className="text-2xl font-bold">
                       {candidate.tests.filter((t) => t.status === "completed").length}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Offers Received</p>
+                    <p className="text-sm text-muted-foreground">{t("common.offersReceived", locale)}</p>
                     <p className="text-2xl font-bold">{candidate.offers.length}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Registered</p>
+                    <p className="text-sm text-muted-foreground">{t("common.registered", locale)}</p>
                     <p className="text-sm">
-                      {new Date(candidate.createdAt).toLocaleDateString()}
+                      {new Date(candidate.createdAt).toLocaleDateString(locale)}
                     </p>
                   </div>
                 </CardContent>
@@ -254,7 +258,7 @@ export default async function CandidateDetailPage({
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <GraduationCap className="w-5 h-5" />
-                    Courses
+                    {t("common.courses", locale)}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -268,11 +272,11 @@ export default async function CandidateDetailPage({
                         <Progress value={cc.progress} className="h-2" />
                         <div className="flex gap-4 text-xs text-muted-foreground mt-1">
                           <span>
-                            Started:{" "}
-                            {cc.startedAt ? new Date(cc.startedAt).toLocaleDateString() : "Not started"}
+                            {t("common.started", locale)}:{" "}
+                            {cc.startedAt ? new Date(cc.startedAt).toLocaleDateString(locale) : t("common.notStarted", locale)}
                           </span>
                           {cc.completedAt && (
-                            <span>Completed: {new Date(cc.completedAt).toLocaleDateString()}</span>
+                            <span>{t("common.completed", locale)}: {new Date(cc.completedAt).toLocaleDateString(locale)}</span>
                           )}
                         </div>
                       </div>

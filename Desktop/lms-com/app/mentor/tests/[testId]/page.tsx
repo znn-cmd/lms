@@ -10,6 +10,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import TestReviewForm from "@/components/test-review-form"
+import { getLocale } from "@/lib/get-locale"
+import { t } from "@/lib/i18n"
 
 export default async function TestReviewPage({
   params,
@@ -22,6 +24,7 @@ export default async function TestReviewPage({
     redirect("/auth/signin")
   }
 
+  const locale = await getLocale()
   const userId = (session.user as any).id
   const candidateTest = await prisma.candidateTest.findUnique({
     where: { id: params.testId },
@@ -57,7 +60,7 @@ export default async function TestReviewPage({
   })
 
   if (!candidateTest || candidateTest.candidate.mentorId !== userId) {
-    return <div>Test not found or access denied</div>
+    return <div>{t("common.testNotFoundOrAccessDenied", locale)}</div>
   }
 
   const openAnswers = candidateTest.answers.filter(
@@ -73,10 +76,10 @@ export default async function TestReviewPage({
           <div className="max-w-4xl mx-auto space-y-6">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
-                Review Test: {candidateTest.test.title}
+                {t("mentor.tests.reviewTest", locale)}: {candidateTest.test.title}
               </h1>
               <p className="text-gray-600 mt-2">
-                Candidate: {candidateTest.candidate.user.name}{" "}
+                {t("common.candidates", locale)}: {candidateTest.candidate.user.name}{" "}
                 {candidateTest.candidate.user.surname}
               </p>
             </div>

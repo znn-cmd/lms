@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { BookOpen, Play, CheckCircle2, Clock } from "lucide-react"
 import Link from "next/link"
+import { getLocale } from "@/lib/get-locale"
+import { t } from "@/lib/i18n"
 
 export default async function CandidateCourses() {
   const session = await getServerSession(authOptions)
@@ -17,6 +19,7 @@ export default async function CandidateCourses() {
     redirect("/auth/signin")
   }
 
+  const locale = await getLocale()
   const userId = (session.user as any).id
   const candidate = await prisma.candidateProfile.findUnique({
     where: { userId },
@@ -53,9 +56,9 @@ export default async function CandidateCourses() {
             <div className="max-w-4xl mx-auto">
               <Card>
                 <CardContent className="py-12 text-center">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">Profile Not Found</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4">{t("common.profileNotFound", locale)}</h2>
                   <p className="text-gray-600 mb-6">
-                    Your candidate profile has not been created yet. Please contact HR or administrator to set up your profile.
+                    {t("common.contactHR", locale)}
                   </p>
                 </CardContent>
               </Card>
@@ -74,8 +77,8 @@ export default async function CandidateCourses() {
         <main className="p-8 mt-16">
           <div className="max-w-7xl mx-auto space-y-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">My Courses</h1>
-              <p className="text-gray-600 mt-2">Continue your learning journey</p>
+              <h1 className="text-3xl font-bold text-gray-900">{t("candidate.courses.title", locale)}</h1>
+              <p className="text-gray-600 mt-2">{t("common.continueJourney", locale)}</p>
             </div>
 
             <div className="grid gap-6">
@@ -105,12 +108,12 @@ export default async function CandidateCourses() {
                           {candidateCourse.completedAt ? (
                             <span className="flex items-center gap-2 text-green-600">
                               <CheckCircle2 className="w-5 h-5" />
-                              Completed
+                              {t("common.completed", locale)}
                             </span>
                           ) : (
                             <span className="flex items-center gap-2 text-blue-600">
                               <Clock className="w-5 h-5" />
-                              In Progress
+                              {t("common.inProgress", locale)}
                             </span>
                           )}
                         </div>
@@ -120,24 +123,24 @@ export default async function CandidateCourses() {
                       <div className="space-y-4">
                         <div>
                           <div className="flex justify-between text-sm mb-2">
-                            <span className="text-muted-foreground">Progress</span>
+                            <span className="text-muted-foreground">{t("common.progress", locale)}</span>
                             <span className="font-medium">
-                              {completedLessons} / {totalLessons} lessons
+                              {completedLessons} / {totalLessons} {t("common.lessons", locale)}
                             </span>
                           </div>
                           <Progress value={progressPercentage} className="h-3" />
                         </div>
                         <div className="flex gap-4 text-sm text-muted-foreground">
                           <div>
-                            <span>Modules: </span>
+                            <span>{t("common.modules", locale)}: </span>
                             <span className="font-medium">{candidateCourse.course.modules.length}</span>
                           </div>
                           <div>
-                            <span>Started: </span>
+                            <span>{t("common.started", locale)}: </span>
                             <span className="font-medium">
                               {candidateCourse.startedAt 
-                                ? new Date(candidateCourse.startedAt).toLocaleDateString()
-                                : "Not started"}
+                                ? new Date(candidateCourse.startedAt).toLocaleDateString(locale)
+                                : t("common.notStarted", locale)}
                             </span>
                           </div>
                         </div>
@@ -145,7 +148,7 @@ export default async function CandidateCourses() {
                           <Link href={`/candidate/courses/${candidateCourse.course.id}`}>
                             <Button>
                               <Play className="w-4 h-4 mr-2" />
-                              {candidateCourse.startedAt ? "Continue Learning" : "Start Course"}
+                              {candidateCourse.startedAt ? t("common.continueLearning", locale) : t("common.startCourse", locale)}
                             </Button>
                           </Link>
                         </div>
@@ -159,9 +162,9 @@ export default async function CandidateCourses() {
                 <Card>
                   <CardContent className="py-12 text-center">
                     <BookOpen className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">No courses assigned</h3>
+                    <h3 className="text-lg font-semibold mb-2">{t("common.noCoursesAssigned", locale)}</h3>
                     <p className="text-muted-foreground">
-                      You don't have any courses assigned yet. Contact your mentor or HR for more information.
+                      {t("common.noCoursesAssignedDesc", locale)}
                     </p>
                   </CardContent>
                 </Card>

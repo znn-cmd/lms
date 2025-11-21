@@ -8,6 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { FileText, CheckCircle2, Clock, Play, Eye } from "lucide-react"
 import Link from "next/link"
+import { getLocale } from "@/lib/get-locale"
+import { t } from "@/lib/i18n"
 
 export default async function CandidateTests() {
   const session = await getServerSession(authOptions)
@@ -16,6 +18,7 @@ export default async function CandidateTests() {
     redirect("/auth/signin")
   }
 
+  const locale = await getLocale()
   const userId = (session.user as any).id
   const candidate = await prisma.candidateProfile.findUnique({
     where: { userId },
@@ -52,13 +55,13 @@ export default async function CandidateTests() {
         <main className="p-8 mt-16">
           <div className="max-w-7xl mx-auto space-y-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">My Tests</h1>
-              <p className="text-gray-600 mt-2">Complete tests to progress in your application</p>
+              <h1 className="text-3xl font-bold text-gray-900">{t("candidate.tests.title", locale)}</h1>
+              <p className="text-gray-600 mt-2">{t("common.completeTestsToProgress", locale)}</p>
             </div>
 
             {pendingTests.length > 0 && (
               <div>
-                <h2 className="text-xl font-semibold mb-4">Pending Tests</h2>
+                <h2 className="text-xl font-semibold mb-4">{t("common.pendingTests", locale)}</h2>
                 <div className="grid gap-4">
                   {pendingTests.map((candidateTest) => (
                     <Card key={candidateTest.id} className="hover:shadow-lg transition-shadow">
@@ -71,17 +74,17 @@ export default async function CandidateTests() {
                             </CardDescription>
                           </div>
                           <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-medium">
-                            {candidateTest.status === "in_progress" ? "In Progress" : "Pending"}
+                            {candidateTest.status === "in_progress" ? t("common.inProgress", locale) : t("common.pending", locale)}
                           </span>
                         </div>
                       </CardHeader>
                       <CardContent>
                         <div className="flex items-center justify-between">
                           <div className="space-y-1 text-sm text-muted-foreground">
-                            <p>Time limit: {candidateTest.test.timeLimit || "No limit"} minutes</p>
-                            <p>Passing score: {candidateTest.test.passingScore}%</p>
+                            <p>{t("common.timeLimit", locale)}: {candidateTest.test.timeLimit || t("common.noLimit", locale)} {t("common.minutes", locale)}</p>
+                            <p>{t("common.passingScore", locale)}: {candidateTest.test.passingScore}%</p>
                             {candidateTest.test.course && (
-                              <p>Course: {candidateTest.test.course.title}</p>
+                              <p>{t("common.courses", locale)}: {candidateTest.test.course.title}</p>
                             )}
                           </div>
                           <Link href={`/candidate/tests/${candidateTest.test.id}`}>
@@ -89,12 +92,12 @@ export default async function CandidateTests() {
                               {candidateTest.status === "in_progress" ? (
                                 <>
                                   <Play className="w-4 h-4 mr-2" />
-                                  Continue
+                                  {t("common.continue", locale)}
                                 </>
                               ) : (
                                 <>
                                   <Play className="w-4 h-4 mr-2" />
-                                  Start Test
+                                  {t("common.startTest", locale)}
                                 </>
                               )}
                             </Button>
@@ -109,7 +112,7 @@ export default async function CandidateTests() {
 
             {completedTests.length > 0 && (
               <div>
-                <h2 className="text-xl font-semibold mb-4">Completed Tests</h2>
+                <h2 className="text-xl font-semibold mb-4">{t("common.completedTests", locale)}</h2>
                 <div className="grid gap-4">
                   {completedTests.map((candidateTest) => (
                     <Card key={candidateTest.id} className="hover:shadow-lg transition-shadow">
@@ -134,7 +137,7 @@ export default async function CandidateTests() {
                               </span>
                             )}
                             <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
-                              Completed
+                              {t("common.completed", locale)}
                             </span>
                           </div>
                         </div>
@@ -143,16 +146,16 @@ export default async function CandidateTests() {
                         <div className="flex items-center justify-between">
                           <div className="space-y-1 text-sm text-muted-foreground">
                             {candidateTest.completedAt && (
-                              <p>Completed: {new Date(candidateTest.completedAt).toLocaleDateString()}</p>
+                              <p>{t("common.completed", locale)}: {new Date(candidateTest.completedAt).toLocaleDateString(locale)}</p>
                             )}
                             {candidateTest.timeSpent && (
-                              <p>Time spent: {candidateTest.timeSpent} minutes</p>
+                              <p>{t("common.timeSpent", locale)}: {candidateTest.timeSpent} {t("common.minutes", locale)}</p>
                             )}
                           </div>
                           <Link href={`/candidate/tests/${candidateTest.test.id}/results`}>
                             <Button variant="outline">
                               <Eye className="w-4 h-4 mr-2" />
-                              View Results
+                              {t("common.viewResults", locale)}
                             </Button>
                           </Link>
                         </div>
@@ -167,9 +170,9 @@ export default async function CandidateTests() {
               <Card>
                 <CardContent className="py-12 text-center">
                   <FileText className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No tests assigned</h3>
+                  <h3 className="text-lg font-semibold mb-2">{t("common.noTestsAssigned", locale)}</h3>
                   <p className="text-muted-foreground">
-                    You don't have any tests assigned yet. Complete your courses to unlock tests.
+                    {t("common.noTestsAssignedDesc", locale)}
                   </p>
                 </CardContent>
               </Card>

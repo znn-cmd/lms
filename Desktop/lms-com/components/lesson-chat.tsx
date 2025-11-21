@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input"
 import { Send, MessageSquare, ChevronUp, ChevronDown } from "lucide-react"
 import { io, Socket } from "socket.io-client"
 import { useSession } from "next-auth/react"
+import { useLocale } from "@/hooks/use-locale"
+import { t } from "@/lib/i18n"
 
 interface LessonChatProps {
   candidateId: string
@@ -15,6 +17,7 @@ interface LessonChatProps {
 
 export function LessonChat({ candidateId, mentor }: LessonChatProps) {
   const { data: session } = useSession()
+  const locale = useLocale()
   const [messages, setMessages] = useState<any[]>([])
   const [newMessage, setNewMessage] = useState("")
   const [socket, setSocket] = useState<Socket | null>(null)
@@ -96,7 +99,7 @@ export function LessonChat({ candidateId, mentor }: LessonChatProps) {
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm flex items-center gap-2">
             <MessageSquare className="w-4 h-4" />
-            Chat with {mentor.name} {mentor.surname}
+            {t("common.chatWith", locale)} {mentor.name} {mentor.surname}
           </CardTitle>
           <Button variant="ghost" size="icon" className="h-6 w-6">
             {isMinimized ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -109,7 +112,7 @@ export function LessonChat({ candidateId, mentor }: LessonChatProps) {
             <div className="flex-1 overflow-y-auto p-4 space-y-2 max-h-[200px]">
               {messages.length === 0 ? (
                 <div className="text-center text-sm text-muted-foreground py-4">
-                  No messages yet. Start a conversation with your mentor!
+                  {t("common.noMessages", locale)}
                 </div>
               ) : (
                 messages.map((msg, idx) => {
@@ -131,7 +134,7 @@ export function LessonChat({ candidateId, mentor }: LessonChatProps) {
                         </div>
                         <div>{msg.content}</div>
                         <div className="text-xs opacity-70 mt-1">
-                          {new Date(msg.createdAt).toLocaleTimeString()}
+                          {new Date(msg.createdAt).toLocaleTimeString(locale)}
                         </div>
                       </div>
                     </div>
@@ -146,7 +149,7 @@ export function LessonChat({ candidateId, mentor }: LessonChatProps) {
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Type your message..."
+                  placeholder={t("common.typeYourMessage", locale)}
                   className="flex-1 h-9 text-sm"
                 />
                 <Button onClick={sendMessage} disabled={!newMessage.trim()} size="sm">

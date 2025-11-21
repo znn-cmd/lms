@@ -20,58 +20,61 @@ import {
   Bell,
   Zap,
 } from "lucide-react"
+import { useLocale } from "@/hooks/use-locale"
+import { t } from "@/lib/i18n"
 
 interface SidebarProps {
   role: string
 }
 
-const candidateLinks = [
-  { href: "/candidate/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/candidate/courses", label: "My Courses", icon: BookOpen },
-  { href: "/candidate/tests", label: "Tests", icon: FileText },
-  { href: "/candidate/offers", label: "Offers", icon: FileText },
-  { href: "/candidate/chat", label: "Chat", icon: MessageSquare },
-  { href: "/candidate/notifications", label: "Notifications", icon: Bell },
-  { href: "/candidate/profile", label: "Profile", icon: User },
-]
-
-const employeeLinks = [
-  { href: "/employee/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/employee/courses", label: "Training", icon: BookOpen },
-  { href: "/employee/notifications", label: "Notifications", icon: Bell },
-  { href: "/employee/profile", label: "Profile", icon: User },
-]
-
-const mentorLinks = [
-  { href: "/mentor/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/mentor/candidates", label: "Candidates", icon: Users },
-  { href: "/mentor/tests", label: "Test Reviews", icon: FileText },
-  { href: "/mentor/notifications", label: "Notifications", icon: Bell },
-]
-
-const hrLinks = [
-  { href: "/hr/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/hr/vacancies", label: "Vacancies", icon: Briefcase },
-  { href: "/hr/candidates", label: "Candidates", icon: Users },
-  { href: "/hr/courses", label: "Courses", icon: GraduationCap },
-  { href: "/hr/tests", label: "Tests", icon: FileText },
-  { href: "/hr/offers", label: "Offers", icon: FileCheck },
-  { href: "/hr/talent-pool", label: "Talent Pool", icon: Database },
-  { href: "/hr/webinars", label: "Webinars", icon: Calendar },
-  { href: "/hr/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/hr/notifications", label: "Notifications", icon: Bell },
-  { href: "/hr/automation", label: "Automation", icon: Zap },
-  { href: "/hr/settings", label: "Settings", icon: Settings },
-]
-
 export function Sidebar({ role }: SidebarProps) {
   const pathname = usePathname()
+  const locale = useLocale()
   
-  const links = 
-    role === "CANDIDATE" ? candidateLinks :
-    role === "EMPLOYEE" ? employeeLinks :
-    role === "MENTOR" ? mentorLinks :
-    hrLinks
+  const getLinks = () => {
+    if (role === "CANDIDATE") {
+      return [
+        { href: "/candidate/dashboard", labelKey: "common.dashboard", icon: LayoutDashboard },
+        { href: "/candidate/courses", labelKey: "common.myCourses", icon: BookOpen },
+        { href: "/candidate/tests", labelKey: "common.tests", icon: FileText },
+        { href: "/candidate/offers", labelKey: "common.offers", icon: FileText },
+        { href: "/candidate/chat", labelKey: "common.chat", icon: MessageSquare },
+        { href: "/candidate/notifications", labelKey: "common.notifications", icon: Bell },
+        { href: "/candidate/profile", labelKey: "common.profile", icon: User },
+      ]
+    } else if (role === "EMPLOYEE") {
+      return [
+        { href: "/employee/dashboard", labelKey: "common.dashboard", icon: LayoutDashboard },
+        { href: "/employee/courses", labelKey: "common.training", icon: BookOpen },
+        { href: "/employee/notifications", labelKey: "common.notifications", icon: Bell },
+        { href: "/employee/profile", labelKey: "common.profile", icon: User },
+      ]
+    } else if (role === "MENTOR") {
+      return [
+        { href: "/mentor/dashboard", labelKey: "common.dashboard", icon: LayoutDashboard },
+        { href: "/mentor/candidates", labelKey: "common.candidates", icon: Users },
+        { href: "/mentor/tests", labelKey: "common.testReviews", icon: FileText },
+        { href: "/mentor/notifications", labelKey: "common.notifications", icon: Bell },
+      ]
+    } else {
+      return [
+        { href: "/hr/dashboard", labelKey: "common.dashboard", icon: LayoutDashboard },
+        { href: "/hr/vacancies", labelKey: "common.vacancies", icon: Briefcase },
+        { href: "/hr/candidates", labelKey: "common.candidates", icon: Users },
+        { href: "/hr/courses", labelKey: "common.courses", icon: GraduationCap },
+        { href: "/hr/tests", labelKey: "common.tests", icon: FileText },
+        { href: "/hr/offers", labelKey: "common.offers", icon: FileCheck },
+        { href: "/hr/talent-pool", labelKey: "common.talentPool", icon: Database },
+        { href: "/hr/webinars", labelKey: "common.webinars", icon: Calendar },
+        { href: "/hr/analytics", labelKey: "common.analytics", icon: BarChart3 },
+        { href: "/hr/notifications", labelKey: "common.notifications", icon: Bell },
+        { href: "/hr/automation", labelKey: "common.automation", icon: Zap },
+        { href: "/hr/settings", labelKey: "common.settings", icon: Settings },
+      ]
+    }
+  }
+
+  const links = getLinks()
 
   return (
     <div className="w-64 bg-white border-r border-gray-200 h-screen fixed left-0 top-0 overflow-y-auto">
@@ -94,7 +97,7 @@ export function Sidebar({ role }: SidebarProps) {
               )}
             >
               <Icon className="w-5 h-5" />
-              <span className="font-medium">{link.label}</span>
+              <span className="font-medium">{t(link.labelKey, locale)}</span>
             </Link>
           )
         })}

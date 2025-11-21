@@ -22,10 +22,13 @@ import {
   Funnel,
   LabelList,
 } from "recharts"
+import { useLocale } from "@/hooks/use-locale"
+import { t } from "@/lib/i18n"
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8']
 
 export default function AnalyticsPage() {
+  const locale = useLocale()
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
@@ -45,7 +48,7 @@ export default function AnalyticsPage() {
         <div className="flex-1 ml-64">
           <Header />
           <main className="p-8 mt-16">
-            <div className="max-w-7xl mx-auto">Loading analytics...</div>
+            <div className="max-w-7xl mx-auto">{t("common.loadingAnalytics", locale)}</div>
           </main>
         </div>
       </div>
@@ -53,13 +56,13 @@ export default function AnalyticsPage() {
   }
 
   const funnelData = [
-    { name: 'Applications', value: data?.funnel?.applications || 100, fill: '#0088FE' },
-    { name: 'Registrations', value: data?.funnel?.registrations || 80, fill: '#00C49F' },
-    { name: 'Profiles Completed', value: data?.funnel?.profilesCompleted || 65, fill: '#FFBB28' },
-    { name: 'In Course', value: data?.funnel?.inCourse || 50, fill: '#FF8042' },
-    { name: 'Tests Completed', value: data?.funnel?.testsCompleted || 40, fill: '#8884d8' },
-    { name: 'Offers Sent', value: data?.funnel?.offersSent || 25, fill: '#82ca9d' },
-    { name: 'Hired', value: data?.funnel?.hired || 20, fill: '#ffc658' },
+    { name: t("common.applications", locale), value: data?.funnel?.applications || 100, fill: '#0088FE' },
+    { name: t("common.registrations", locale), value: data?.funnel?.registrations || 80, fill: '#00C49F' },
+    { name: t("common.profilesCompleted", locale), value: data?.funnel?.profilesCompleted || 65, fill: '#FFBB28' },
+    { name: t("common.inCourse", locale), value: data?.funnel?.inCourse || 50, fill: '#FF8042' },
+    { name: t("common.testsCompleted", locale), value: data?.funnel?.testsCompleted || 40, fill: '#8884d8' },
+    { name: t("common.offersSent", locale), value: data?.funnel?.offersSent || 25, fill: '#82ca9d' },
+    { name: t("hr.dashboard.hired", locale), value: data?.funnel?.hired || 20, fill: '#ffc658' },
   ]
 
   return (
@@ -70,15 +73,15 @@ export default function AnalyticsPage() {
         <main className="p-8 mt-16">
           <div className="max-w-7xl mx-auto space-y-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Analytics Dashboard</h1>
-              <p className="text-gray-600 mt-2">Comprehensive insights into your hiring pipeline</p>
+              <h1 className="text-3xl font-bold text-gray-900">{t("common.analyticsDashboard", locale)}</h1>
+              <p className="text-gray-600 mt-2">{t("common.comprehensiveInsights", locale)}</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Hiring Funnel</CardTitle>
-                  <CardDescription>Candidate progression through the pipeline</CardDescription>
+                  <CardTitle>{t("common.hiringFunnel", locale)}</CardTitle>
+                  <CardDescription>{t("common.candidateProgression", locale)}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={400}>
@@ -96,8 +99,8 @@ export default function AnalyticsPage() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Status Distribution</CardTitle>
-                  <CardDescription>Current candidate status breakdown</CardDescription>
+                  <CardTitle>{t("common.statusDistribution", locale)}</CardTitle>
+                  <CardDescription>{t("common.currentStatusBreakdown", locale)}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={400}>
@@ -124,8 +127,8 @@ export default function AnalyticsPage() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Source Performance</CardTitle>
-                  <CardDescription>Registration sources comparison</CardDescription>
+                  <CardTitle>{t("common.sourcePerformance", locale)}</CardTitle>
+                  <CardDescription>{t("common.registrationSourcesComparison", locale)}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={400}>
@@ -135,8 +138,8 @@ export default function AnalyticsPage() {
                       <YAxis />
                       <Tooltip />
                       <Legend />
-                      <Bar dataKey="registrations" fill="#0088FE" name="Registrations" />
-                      <Bar dataKey="completions" fill="#00C49F" name="Completions" />
+                      <Bar dataKey="registrations" fill="#0088FE" name={t("common.registrations", locale)} />
+                      <Bar dataKey="completions" fill="#00C49F" name={t("common.completions", locale)} />
                     </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
@@ -144,8 +147,8 @@ export default function AnalyticsPage() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Test Scores Distribution</CardTitle>
-                  <CardDescription>Average test scores by vacancy</CardDescription>
+                  <CardTitle>{t("common.testScoresDistribution", locale)}</CardTitle>
+                  <CardDescription>{t("common.averageTestScoresByVacancy", locale)}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={400}>
@@ -155,8 +158,8 @@ export default function AnalyticsPage() {
                       <YAxis domain={[0, 100]} />
                       <Tooltip />
                       <Legend />
-                      <Bar dataKey="averageScore" fill="#FF8042" name="Average Score" />
-                      <Bar dataKey="passingScore" fill="#8884d8" name="Passing Score" />
+                      <Bar dataKey="averageScore" fill="#FF8042" name={t("common.averageScore", locale)} />
+                      <Bar dataKey="passingScore" fill="#8884d8" name={t("common.passingScore", locale)} />
                     </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
@@ -164,8 +167,8 @@ export default function AnalyticsPage() {
 
               <Card className="lg:col-span-2">
                 <CardHeader>
-                  <CardTitle>Monthly Trends</CardTitle>
-                  <CardDescription>Registration and hiring trends over time</CardDescription>
+                  <CardTitle>{t("common.monthlyTrends", locale)}</CardTitle>
+                  <CardDescription>{t("common.registrationAndHiringTrends", locale)}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={400}>
@@ -175,8 +178,8 @@ export default function AnalyticsPage() {
                       <YAxis />
                       <Tooltip />
                       <Legend />
-                      <Line type="monotone" dataKey="registrations" stroke="#0088FE" name="Registrations" />
-                      <Line type="monotone" dataKey="hired" stroke="#00C49F" name="Hired" />
+                      <Line type="monotone" dataKey="registrations" stroke="#0088FE" name={t("common.registrations", locale)} />
+                      <Line type="monotone" dataKey="hired" stroke="#00C49F" name={t("hr.dashboard.hired", locale)} />
                     </LineChart>
                   </ResponsiveContainer>
                 </CardContent>

@@ -49,13 +49,13 @@ export default async function TestsPage() {
           <div className="max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Tests</h1>
-                <p className="text-gray-600 mt-2">Manage tests and assessments</p>
+                <h1 className="text-3xl font-bold text-gray-900">{t("hr.tests.title", locale)}</h1>
+                <p className="text-gray-600 mt-2">{t("hr.tests.subtitle", locale)}</p>
               </div>
               <Link href="/hr/tests/new">
                 <Button>
                   <Plus className="w-4 h-4 mr-2" />
-                  Create Test
+                  {t("hr.tests.createTest", locale)}
                 </Button>
               </Link>
             </div>
@@ -68,17 +68,17 @@ export default async function TestsPage() {
                       <div className="flex-1">
                         <CardTitle>{test.title}</CardTitle>
                         <CardDescription className="mt-2">
-                          {test.description || "No description"}
+                          {test.description || t("common.noDescription", locale)}
                         </CardDescription>
                       </div>
                       <div className="flex items-center gap-2">
                         {test.isActive ? (
                           <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
-                            Active
+                            {t("common.active", locale)}
                           </span>
                         ) : (
                           <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
-                            Inactive
+                            {t("common.inactive", locale)}
                           </span>
                         )}
                       </div>
@@ -87,30 +87,30 @@ export default async function TestsPage() {
                   <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                       <div>
-                        <p className="text-sm text-muted-foreground">Questions</p>
+                        <p className="text-sm text-muted-foreground">{t("common.questions", locale)}</p>
                         <p className="text-lg font-semibold">{test._count.questions}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground">Passing Score</p>
+                        <p className="text-sm text-muted-foreground">{t("common.passingScore", locale)}</p>
                         <p className="text-lg font-semibold">{test.passingScore}%</p>
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground">Time Limit</p>
-                        <p className="text-lg font-semibold">{test.timeLimit || "No limit"} min</p>
+                        <p className="text-sm text-muted-foreground">{t("common.timeLimit", locale)}</p>
+                        <p className="text-lg font-semibold">{test.timeLimit || t("common.noLimit", locale)} {t("common.minutes", locale)}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground">Attempts</p>
+                        <p className="text-sm text-muted-foreground">{t("common.attempts", locale)}</p>
                         <p className="text-lg font-semibold">{test._count.candidateTests}</p>
                       </div>
                     </div>
                     <div className="flex gap-2 text-sm text-muted-foreground mb-4">
                       {test.course && (
-                        <span>Course: {test.course.title}</span>
+                        <span>{t("common.courses", locale)}: {test.course.title}</span>
                       )}
                       {test.vacancy && (
                         <>
                           {test.course && <span>•</span>}
-                          <span>Vacancy: {test.vacancy.title}</span>
+                          <span>{t("common.vacancies", locale)}: {test.vacancy.title}</span>
                         </>
                       )}
                     </div>
@@ -118,12 +118,12 @@ export default async function TestsPage() {
                       <Link href={`/hr/tests/${test.id}/edit`}>
                         <Button variant="outline">
                           <Edit className="w-4 h-4 mr-2" />
-                          Edit
+                          {t("common.edit", locale)}
                         </Button>
                       </Link>
                       <Button variant="outline">
                         <Trash2 className="w-4 h-4 mr-2" />
-                        Delete
+                        {t("common.delete", locale)}
                       </Button>
                     </div>
                   </CardContent>
@@ -134,14 +134,14 @@ export default async function TestsPage() {
                 <Card>
                   <CardContent className="py-12 text-center">
                     <FileText className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">No tests yet</h3>
+                    <h3 className="text-lg font-semibold mb-2">{t("common.noTestsYet", locale)}</h3>
                     <p className="text-muted-foreground mb-4">
-                      Create your first test to assess candidates
+                      {t("common.noTestsYetDesc", locale)}
                     </p>
                     <Link href="/hr/tests/new">
                       <Button>
                         <Plus className="w-4 h-4 mr-2" />
-                        Create Test
+                        {t("hr.tests.createTest", locale)}
                       </Button>
                     </Link>
                   </CardContent>

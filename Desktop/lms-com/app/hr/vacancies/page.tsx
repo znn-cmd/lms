@@ -8,6 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Briefcase, Plus, Link as LinkIcon, Users, Settings } from "lucide-react"
 import Link from "next/link"
+import { getLocale } from "@/lib/get-locale"
+import { t } from "@/lib/i18n"
 
 export default async function VacanciesPage() {
   const session = await getServerSession(authOptions)
@@ -15,6 +17,8 @@ export default async function VacanciesPage() {
   if (!session || !["HR", "ADMIN"].includes((session.user as any)?.role)) {
     redirect("/auth/signin")
   }
+
+  const locale = await getLocale()
 
   const vacancies = await prisma.vacancy.findMany({
     include: {
@@ -42,13 +46,13 @@ export default async function VacanciesPage() {
           <div className="max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Vacancies</h1>
-                <p className="text-gray-600 mt-2">Manage job openings and recruitment</p>
+                <h1 className="text-3xl font-bold text-gray-900">{t("hr.vacancies.title", locale)}</h1>
+                <p className="text-gray-600 mt-2">{t("common.manageJobOpenings", locale)}</p>
               </div>
               <Link href="/hr/vacancies/new">
                 <Button>
                   <Plus className="w-4 h-4 mr-2" />
-                  Create Vacancy
+                  {t("hr.vacancies.createVacancy", locale)}
                 </Button>
               </Link>
             </div>
@@ -102,13 +106,13 @@ export default async function VacanciesPage() {
                       <Link href={`/hr/vacancies/${vacancy.id}`}>
                         <Button variant="outline">
                           <Settings className="w-4 h-4 mr-2" />
-                          Manage
+                          {t("common.manage", locale)}
                         </Button>
                       </Link>
                       <Link href={`/hr/vacancies/${vacancy.id}/sources`}>
                         <Button variant="outline">
                           <LinkIcon className="w-4 h-4 mr-2" />
-                          Registration Links
+                          {t("common.registrationLinks", locale)}
                         </Button>
                       </Link>
                     </div>
@@ -120,14 +124,14 @@ export default async function VacanciesPage() {
                 <Card>
                   <CardContent className="py-12 text-center">
                     <Briefcase className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">No vacancies yet</h3>
+                    <h3 className="text-lg font-semibold mb-2">{t("common.noVacanciesYet", locale)}</h3>
                     <p className="text-muted-foreground mb-4">
-                      Create your first vacancy to start recruiting candidates.
+                      {t("common.noVacanciesYetDesc", locale)}
                     </p>
                     <Link href="/hr/vacancies/new">
                       <Button>
                         <Plus className="w-4 h-4 mr-2" />
-                        Create Vacancy
+                        {t("hr.vacancies.createVacancy", locale)}
                       </Button>
                     </Link>
                   </CardContent>

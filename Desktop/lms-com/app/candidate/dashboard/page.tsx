@@ -7,6 +7,8 @@ import { Header } from "@/components/layout/header"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { BookOpen, FileText, CheckCircle2, Clock } from "lucide-react"
+import { getLocale } from "@/lib/get-locale"
+import { t } from "@/lib/i18n"
 
 export default async function CandidateDashboard() {
   const session = await getServerSession(authOptions)
@@ -15,6 +17,7 @@ export default async function CandidateDashboard() {
     redirect("/auth/signin")
   }
 
+  const locale = await getLocale()
   const userId = (session.user as any).id
   const candidate = await prisma.candidateProfile.findUnique({
     where: { userId },
@@ -58,12 +61,12 @@ export default async function CandidateDashboard() {
             <div className="max-w-4xl mx-auto">
               <Card>
                 <CardContent className="py-12 text-center">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">Profile Not Found</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4">{t("common.profileNotFound", locale)}</h2>
                   <p className="text-gray-600 mb-6">
-                    Your candidate profile has not been created yet. Please contact HR or administrator to set up your profile.
+                    {t("common.contactHR", locale)}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    If you just registered, please wait a moment for your profile to be created, or contact support.
+                    {t("common.waitOrContact", locale)}
                   </p>
                 </CardContent>
               </Card>
@@ -86,22 +89,22 @@ export default async function CandidateDashboard() {
         <main className="p-8 mt-16">
           <div className="max-w-7xl mx-auto space-y-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Welcome back, {candidate.user.name || "Candidate"}!</h1>
-              <p className="text-gray-600 mt-2">Here's your learning progress</p>
+              <h1 className="text-3xl font-bold text-gray-900">{t("candidate.dashboard.title", locale)}, {candidate.user.name || t("common.candidates", locale)}!</h1>
+              <p className="text-gray-600 mt-2">{t("common.hereProgress", locale)}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Current Course</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("candidate.dashboard.currentCourse", locale)}</CardTitle>
                   <BookOpen className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{activeCourse?.course.title || "None"}</div>
+                  <div className="text-2xl font-bold">{activeCourse?.course.title || t("common.none", locale)}</div>
                   {activeCourse && (
                     <div className="mt-2">
                       <Progress value={activeCourse.progress} className="h-2" />
-                      <p className="text-xs text-muted-foreground mt-1">{activeCourse.progress}% complete</p>
+                      <p className="text-xs text-muted-foreground mt-1">{activeCourse.progress}% {t("common.complete", locale)}</p>
                     </div>
                   )}
                 </CardContent>
@@ -109,34 +112,34 @@ export default async function CandidateDashboard() {
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Tests Completed</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("candidate.dashboard.testsCompleted", locale)}</CardTitle>
                   <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{completedTests.length}</div>
-                  <p className="text-xs text-muted-foreground">Out of {candidate.tests.length} total</p>
+                  <p className="text-xs text-muted-foreground">{t("common.outOf", locale)} {candidate.tests.length} {t("common.total", locale)}</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Pending Tests</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("candidate.dashboard.pendingTests", locale)}</CardTitle>
                   <Clock className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{pendingTests.length}</div>
-                  <p className="text-xs text-muted-foreground">Awaiting completion</p>
+                  <p className="text-xs text-muted-foreground">{t("common.awaitingCompletion", locale)}</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Status</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("candidate.dashboard.status", locale)}</CardTitle>
                   <FileText className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold capitalize">{candidate.status.replace("_", " ")}</div>
-                  <p className="text-xs text-muted-foreground">{candidate.currentVacancy?.title || "No vacancy"}</p>
+                  <p className="text-xs text-muted-foreground">{candidate.currentVacancy?.title || t("common.noVacancy", locale)}</p>
                 </CardContent>
               </Card>
             </div>
@@ -144,22 +147,22 @@ export default async function CandidateDashboard() {
             {activeCourse && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Current Course Progress</CardTitle>
+                  <CardTitle>{t("candidate.dashboard.currentCourseProgress", locale)}</CardTitle>
                   <CardDescription>{activeCourse.course.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     <div>
                       <div className="flex justify-between text-sm mb-2">
-                        <span>Overall Progress</span>
+                        <span>{t("common.overallProgress", locale)}</span>
                         <span>{activeCourse.progress}%</span>
                       </div>
                       <Progress value={activeCourse.progress} className="h-3" />
                     </div>
                     <div className="flex gap-4 text-sm">
                       <div>
-                        <span className="text-muted-foreground">Started:</span>{" "}
-                        {activeCourse.startedAt ? new Date(activeCourse.startedAt).toLocaleDateString() : "Not started"}
+                        <span className="text-muted-foreground">{t("common.started", locale)}</span>{" "}
+                        {activeCourse.startedAt ? new Date(activeCourse.startedAt).toLocaleDateString(locale) : t("common.notStarted", locale)}
                       </div>
                     </div>
                   </div>
@@ -170,7 +173,7 @@ export default async function CandidateDashboard() {
             {candidate.mentor && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Your Mentor</CardTitle>
+                  <CardTitle>{t("common.yourMentor", locale)}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-4">

@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { BookOpen, CheckCircle2, Clock } from "lucide-react"
 import Link from "next/link"
+import { getLocale } from "@/lib/get-locale"
+import { t } from "@/lib/i18n"
 
 export default async function EmployeeCoursesPage() {
   const session = await getServerSession(authOptions)
@@ -17,6 +19,7 @@ export default async function EmployeeCoursesPage() {
     redirect("/auth/signin")
   }
 
+  const locale = await getLocale()
   const userId = (session.user as any).id
   const candidate = await prisma.candidateProfile.findUnique({
     where: { userId },
@@ -49,8 +52,8 @@ export default async function EmployeeCoursesPage() {
           <main className="p-8 mt-16">
             <Card>
               <CardContent className="py-12 text-center">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Profile Not Found</h2>
-                <p className="text-gray-600">Please contact HR for assistance.</p>
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">{t("common.profileNotFound", locale)}</h2>
+                <p className="text-gray-600">{t("common.contactHRForAssistance", locale)}</p>
               </CardContent>
             </Card>
           </main>
@@ -70,13 +73,13 @@ export default async function EmployeeCoursesPage() {
         <main className="p-8 mt-16">
           <div className="max-w-7xl mx-auto space-y-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Additional Training</h1>
-              <p className="text-gray-600 mt-2">Continue your professional development</p>
+              <h1 className="text-3xl font-bold text-gray-900">{t("employee.courses.title", locale)}</h1>
+              <p className="text-gray-600 mt-2">{t("employee.courses.subtitle", locale)}</p>
             </div>
 
             {activeCourses.length > 0 && (
               <div>
-                <h2 className="text-2xl font-semibold mb-4">Active Training</h2>
+                <h2 className="text-2xl font-semibold mb-4">{t("employee.courses.activeTraining", locale)}</h2>
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {activeCourses.map((candidateCourse) => {
                     const totalLessons = candidateCourse.course.modules.reduce(
@@ -100,9 +103,9 @@ export default async function EmployeeCoursesPage() {
                           <div className="space-y-4">
                             <div>
                               <div className="flex justify-between text-sm mb-2">
-                                <span>Progress</span>
+                                <span>{t("common.progress", locale)}</span>
                                 <span>
-                                  {completedLessons} / {totalLessons} lessons
+                                  {completedLessons} / {totalLessons} {t("common.lessons", locale)}
                                 </span>
                               </div>
                               <Progress
@@ -113,7 +116,7 @@ export default async function EmployeeCoursesPage() {
                               />
                             </div>
                             <Link href={`/employee/courses/${candidateCourse.course.id}`}>
-                              <Button className="w-full">Continue Training</Button>
+                              <Button className="w-full">{t("employee.dashboard.continueTraining", locale)}</Button>
                             </Link>
                           </div>
                         </CardContent>
@@ -126,7 +129,7 @@ export default async function EmployeeCoursesPage() {
 
             {completedCourses.length > 0 && (
               <div>
-                <h2 className="text-2xl font-semibold mb-4">Completed Training</h2>
+                <h2 className="text-2xl font-semibold mb-4">{t("employee.courses.completedTraining", locale)}</h2>
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {completedCourses.map((candidateCourse) => (
                     <Card
@@ -143,10 +146,10 @@ export default async function EmployeeCoursesPage() {
                       <CardContent>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <Clock className="w-4 h-4" />
-                          Completed{" "}
+                          {t("common.completed", locale)}{" "}
                           {candidateCourse.completedAt
-                            ? new Date(candidateCourse.completedAt).toLocaleDateString()
-                            : "N/A"}
+                            ? new Date(candidateCourse.completedAt).toLocaleDateString(locale)
+                            : t("common.nA", locale)}
                         </div>
                       </CardContent>
                     </Card>
@@ -159,9 +162,9 @@ export default async function EmployeeCoursesPage() {
               <Card>
                 <CardContent className="py-12 text-center">
                   <BookOpen className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No training assigned</h3>
+                  <h3 className="text-lg font-semibold mb-2">{t("employee.courses.noTrainingAssigned", locale)}</h3>
                   <p className="text-muted-foreground">
-                    Additional training courses will appear here when assigned by HR.
+                    {t("employee.courses.noTrainingAssignedDesc", locale)}
                   </p>
                 </CardContent>
               </Card>

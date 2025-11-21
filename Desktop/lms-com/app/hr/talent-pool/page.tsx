@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Database, Search } from "lucide-react"
 import { CandidateActions } from "./candidate-actions"
+import { getLocale } from "@/lib/get-locale"
+import { t } from "@/lib/i18n"
 
 export default async function TalentPoolPage({
   searchParams,
@@ -21,6 +23,8 @@ export default async function TalentPoolPage({
   if (!session || !["HR", "ADMIN"].includes((session.user as any)?.role)) {
     redirect("/auth/signin")
   }
+
+  const locale = await getLocale()
 
   const where: any = {
     OR: [
@@ -101,8 +105,8 @@ export default async function TalentPoolPage({
           <div className="max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Talent Pool</h1>
-                <p className="text-gray-600 mt-2">Manage your candidate database</p>
+                <h1 className="text-3xl font-bold text-gray-900">{t("common.talentPool", locale)}</h1>
+                <p className="text-gray-600 mt-2">{t("common.manageCandidateDatabase", locale)}</p>
               </div>
             </div>
 
@@ -111,27 +115,27 @@ export default async function TalentPoolPage({
                 <div className="flex gap-4">
                   <div className="flex-1">
                     <Input
-                      placeholder="Search by name or email..."
+                      placeholder={t("common.searchByNameOrEmail", locale)}
                       defaultValue={searchParams.search}
                     />
                   </div>
                   <Select defaultValue={searchParams.status || "all"}>
                     <SelectTrigger className="w-[200px]">
-                      <SelectValue placeholder="Filter by status" />
+                      <SelectValue placeholder={t("common.filterByStatus", locale)} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Statuses</SelectItem>
-                      <SelectItem value="IN_TALENT_POOL">In Talent Pool</SelectItem>
-                      <SelectItem value="REJECTED">Rejected</SelectItem>
-                      <SelectItem value="OFFER_DECLINED">Offer Declined</SelectItem>
+                      <SelectItem value="all">{t("common.allStatuses", locale)}</SelectItem>
+                      <SelectItem value="IN_TALENT_POOL">{t("common.inTalentPool", locale)}</SelectItem>
+                      <SelectItem value="REJECTED">{t("common.rejected", locale)}</SelectItem>
+                      <SelectItem value="OFFER_DECLINED">{t("common.offerDeclined", locale)}</SelectItem>
                     </SelectContent>
                   </Select>
                   <Select defaultValue={searchParams.vacancy || "all"}>
                     <SelectTrigger className="w-[200px]">
-                      <SelectValue placeholder="Filter by vacancy" />
+                      <SelectValue placeholder={t("common.filterByVacancy", locale)} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Vacancies</SelectItem>
+                      <SelectItem value="all">{t("common.allVacancies", locale)}</SelectItem>
                       {vacancies.map((v) => (
                         <SelectItem key={v.id} value={v.id}>
                           {v.title}
@@ -141,7 +145,7 @@ export default async function TalentPoolPage({
                   </Select>
                   <Button>
                     <Search className="w-4 h-4 mr-2" />
-                    Search
+                    {t("common.search", locale)}
                   </Button>
                 </div>
               </CardContent>
@@ -158,15 +162,15 @@ export default async function TalentPoolPage({
                         </h3>
                         <p className="text-sm text-muted-foreground">{candidate.user.email}</p>
                         <div className="flex gap-4 mt-2 text-sm text-muted-foreground">
-                          <span>Status: {candidate.status.replace("_", " ")}</span>
+                          <span>{t("common.status", locale)}: {candidate.status.replace("_", " ")}</span>
                           <span>•</span>
-                          <span>Vacancy: {candidate.currentVacancy?.title || "None"}</span>
+                          <span>{t("common.vacancies", locale)}: {candidate.currentVacancy?.title || t("common.none", locale)}</span>
                           <span>•</span>
-                          <span>Source: {candidate.registrationSource?.name || "N/A"}</span>
+                          <span>{t("common.source", locale)}: {candidate.registrationSource?.name || t("common.nA", locale)}</span>
                           {candidate.tests[0] && (
                             <>
                               <span>•</span>
-                              <span>Best Score: {candidate.tests[0].score || "N/A"}%</span>
+                              <span>{t("common.bestScore", locale)}: {candidate.tests[0].score || t("common.nA", locale)}%</span>
                             </>
                           )}
                         </div>
@@ -188,9 +192,9 @@ export default async function TalentPoolPage({
                 <Card>
                   <CardContent className="py-12 text-center">
                     <Database className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">Talent Pool is empty</h3>
+                    <h3 className="text-lg font-semibold mb-2">{t("common.talentPoolEmpty", locale)}</h3>
                     <p className="text-muted-foreground">
-                      Candidates will appear here when they are rejected or decline offers.
+                      {t("common.talentPoolEmptyDesc", locale)}
                     </p>
                   </CardContent>
                 </Card>

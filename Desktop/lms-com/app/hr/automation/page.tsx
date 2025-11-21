@@ -8,6 +8,8 @@ import { AutomationList } from "./automation-list"
 import { Button } from "@/components/ui/button"
 import { Plus, Zap } from "lucide-react"
 import Link from "next/link"
+import { getLocale } from "@/lib/get-locale"
+import { t } from "@/lib/i18n"
 
 export default async function AutomationPage() {
   const session = await getServerSession(authOptions)
@@ -15,6 +17,8 @@ export default async function AutomationPage() {
   if (!session || !["HR", "ADMIN"].includes((session.user as any)?.role)) {
     redirect("/auth/signin")
   }
+
+  const locale = await getLocale()
 
   const triggers = await prisma.trigger.findMany({
     orderBy: { createdAt: "desc" },
@@ -29,13 +33,13 @@ export default async function AutomationPage() {
           <div className="max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Automation</h1>
-                <p className="text-gray-600 mt-2">Create and manage automated workflows and triggers</p>
+                <h1 className="text-3xl font-bold text-gray-900">{t("hr.automation.title", locale)}</h1>
+                <p className="text-gray-600 mt-2">{t("hr.automation.subtitle", locale)}</p>
               </div>
               <Link href="/hr/automation/new">
                 <Button>
                   <Plus className="w-4 h-4 mr-2" />
-                  Create Automation
+                  {t("hr.automation.createAutomation", locale)}
                 </Button>
               </Link>
             </div>

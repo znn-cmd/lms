@@ -8,6 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Users, Briefcase, GraduationCap, TrendingUp, UserCheck, Clock, XCircle, FileText, CheckCircle2, AlertCircle } from "lucide-react"
 import Link from "next/link"
 import { getKanbanStats } from "@/lib/kanban-stats"
+import { getLocale } from "@/lib/get-locale"
+import { t } from "@/lib/i18n"
 
 export default async function HRDashboard() {
   const session = await getServerSession(authOptions)
@@ -15,6 +17,8 @@ export default async function HRDashboard() {
   if (!session || !["HR", "ADMIN"].includes((session.user as any)?.role)) {
     redirect("/auth/signin")
   }
+
+  const locale = await getLocale()
 
   // Get statistics
   const [
@@ -66,52 +70,52 @@ export default async function HRDashboard() {
         <main className="p-8 mt-16">
           <div className="max-w-7xl mx-auto space-y-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">HR Dashboard</h1>
-              <p className="text-gray-600 mt-2">Overview of your hiring pipeline</p>
+              <h1 className="text-3xl font-bold text-gray-900">{t("hr.dashboard.title", locale)}</h1>
+              <p className="text-gray-600 mt-2">{t("common.overview", locale)}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Candidates</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("hr.dashboard.totalCandidates", locale)}</CardTitle>
                   <Users className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{totalCandidates}</div>
-                  <p className="text-xs text-muted-foreground">All time registrations</p>
+                  <p className="text-xs text-muted-foreground">{t("common.allTimeRegistrations", locale)}</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Active Vacancies</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("hr.dashboard.activeVacancies", locale)}</CardTitle>
                   <Briefcase className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{activeVacancies}</div>
-                  <p className="text-xs text-muted-foreground">Currently open</p>
+                  <p className="text-xs text-muted-foreground">{t("common.currentlyOpen", locale)}</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Active Courses</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("hr.dashboard.activeCourses", locale)}</CardTitle>
                   <GraduationCap className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{totalCourses}</div>
-                  <p className="text-xs text-muted-foreground">Available for training</p>
+                  <p className="text-xs text-muted-foreground">{t("common.availableForTraining", locale)}</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Hired</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("hr.dashboard.hired", locale)}</CardTitle>
                   <UserCheck className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{statusCounts.HIRED || 0}</div>
-                  <p className="text-xs text-muted-foreground">Successfully hired</p>
+                  <p className="text-xs text-muted-foreground">{t("common.successfullyHired", locale)}</p>
                 </CardContent>
               </Card>
             </div>
@@ -119,64 +123,64 @@ export default async function HRDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Kanban Pipeline</CardTitle>
-                  <CardDescription>Candidate distribution by kanban status</CardDescription>
+                  <CardTitle>{t("common.kanbanPipeline", locale)}</CardTitle>
+                  <CardDescription>{t("common.candidateDistribution", locale)}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Users className="w-4 h-4 text-blue-500" />
-                        <span className="text-sm">New Candidate</span>
+                        <span className="text-sm">{t("common.newCandidate", locale)}</span>
                       </div>
                       <span className="font-semibold">{kanbanStats.newCandidate}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4 text-gray-500" />
-                        <span className="text-sm">Started Learning</span>
+                        <span className="text-sm">{t("common.startedLearning", locale)}</span>
                       </div>
                       <span className="font-semibold">{kanbanStats.startedLearning}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <GraduationCap className="w-4 h-4 text-gray-500" />
-                        <span className="text-sm">In Training</span>
+                        <span className="text-sm">{t("common.inTraining", locale)}</span>
                       </div>
                       <span className="font-semibold">{kanbanStats.inTraining}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <FileText className="w-4 h-4 text-gray-500" />
-                        <span className="text-sm">Started Test</span>
+                        <span className="text-sm">{t("common.startedTest", locale)}</span>
                       </div>
                       <span className="font-semibold">{kanbanStats.startedTest}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <TrendingUp className="w-4 h-4 text-yellow-500" />
-                        <span className="text-sm">Test Passed Successfully</span>
+                        <span className="text-sm">{t("common.testPassedSuccessfully", locale)}</span>
                       </div>
                       <span className="font-semibold">{kanbanStats.testPassed}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <CheckCircle2 className="w-4 h-4 text-green-500" />
-                        <span className="text-sm">Offer Accepted</span>
+                        <span className="text-sm">{t("common.offerAccepted", locale)}</span>
                       </div>
                       <span className="font-semibold">{kanbanStats.offerAccepted}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <XCircle className="w-4 h-4 text-red-500" />
-                        <span className="text-sm">Test Failed</span>
+                        <span className="text-sm">{t("common.testFailed", locale)}</span>
                       </div>
                       <span className="font-semibold">{kanbanStats.testFailed}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <AlertCircle className="w-4 h-4 text-red-500" />
-                        <span className="text-sm">Offer Declined</span>
+                        <span className="text-sm">{t("common.offerDeclined", locale)}</span>
                       </div>
                       <span className="font-semibold">{kanbanStats.offerDeclined}</span>
                     </div>
@@ -186,8 +190,8 @@ export default async function HRDashboard() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Recent Candidates</CardTitle>
-                  <CardDescription>Latest registrations</CardDescription>
+                  <CardTitle>{t("common.recentCandidates", locale)}</CardTitle>
+                  <CardDescription>{t("common.latestRegistrations", locale)}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
@@ -198,7 +202,7 @@ export default async function HRDashboard() {
                             {candidate.user.name} {candidate.user.surname}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {candidate.currentVacancy?.title || "No vacancy"}
+                            {candidate.currentVacancy?.title || t("common.noVacancy", locale)}
                           </p>
                         </div>
                         <span className="text-xs px-2 py-1 bg-gray-100 rounded-full capitalize">
@@ -212,29 +216,29 @@ export default async function HRDashboard() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Quick Actions</CardTitle>
-                  <CardDescription>Common tasks</CardDescription>
+                  <CardTitle>{t("common.quickActions", locale)}</CardTitle>
+                  <CardDescription>{t("common.commonTasks", locale)}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
                     <Link href="/hr/vacancies/new">
                       <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors text-sm">
-                        Create New Vacancy
+                        {t("common.createNewVacancy", locale)}
                       </button>
                     </Link>
                     <Link href="/hr/courses/new">
                       <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors text-sm">
-                        Create New Course
+                        {t("common.createNewCourse", locale)}
                       </button>
                     </Link>
                     <Link href="/hr/candidates">
                       <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors text-sm">
-                        View All Candidates
+                        {t("common.viewAllCandidates", locale)}
                       </button>
                     </Link>
                     <Link href="/hr/talent-pool">
                       <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors text-sm">
-                        Talent Pool
+                        {t("common.talentPool", locale)}
                       </button>
                     </Link>
                   </div>

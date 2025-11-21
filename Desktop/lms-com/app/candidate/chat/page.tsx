@@ -9,9 +9,12 @@ import { Input } from "@/components/ui/input"
 import { Send, MessageSquare } from "lucide-react"
 import { io, Socket } from "socket.io-client"
 import { useSession } from "next-auth/react"
+import { useLocale } from "@/hooks/use-locale"
+import { t } from "@/lib/i18n"
 
 export default function CandidateChatPage() {
   const { data: session } = useSession()
+  const locale = useLocale()
   const [candidateId, setCandidateId] = useState<string | null>(null)
   const [mentor, setMentor] = useState<any>(null)
   const [messages, setMessages] = useState<any[]>([])
@@ -98,7 +101,7 @@ export default function CandidateChatPage() {
   }
 
   if (loading) {
-    return <div>Loading...</div>
+    return <div>{t("common.loading", locale)}</div>
   }
 
   if (!mentor) {
@@ -111,9 +114,9 @@ export default function CandidateChatPage() {
             <Card>
               <CardContent className="py-12 text-center">
                 <MessageSquare className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No Mentor Assigned</h3>
+                <h3 className="text-lg font-semibold mb-2">{t("common.noMentorAssigned", locale)}</h3>
                 <p className="text-muted-foreground">
-                  You don't have a mentor assigned yet. Please contact HR for assistance.
+                  {t("common.noMentorAssignedDesc", locale)}
                 </p>
               </CardContent>
             </Card>
@@ -134,7 +137,7 @@ export default function CandidateChatPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MessageSquare className="w-5 h-5" />
-                  Chat with {mentor.name} {mentor.surname}
+                  {t("common.chatWith", locale)} {mentor.name} {mentor.surname}
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex-1 flex flex-col p-0">
@@ -158,7 +161,7 @@ export default function CandidateChatPage() {
                           </div>
                           <div className="text-sm">{msg.content}</div>
                           <div className="text-xs opacity-70 mt-1">
-                            {new Date(msg.createdAt).toLocaleTimeString()}
+                            {new Date(msg.createdAt).toLocaleTimeString(locale)}
                           </div>
                         </div>
                       </div>
@@ -172,7 +175,7 @@ export default function CandidateChatPage() {
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
                       onKeyPress={handleKeyPress}
-                      placeholder="Type your message..."
+                      placeholder={t("common.typeYourMessage", locale)}
                       className="flex-1"
                     />
                     <Button onClick={sendMessage} disabled={!newMessage.trim()}>

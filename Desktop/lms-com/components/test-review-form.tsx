@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
+import { useLocale } from "@/hooks/use-locale"
+import { t } from "@/lib/i18n"
 
 export default function TestReviewForm({
   candidateTestId,
@@ -18,6 +20,7 @@ export default function TestReviewForm({
   existingReview?: any
 }) {
   const router = useRouter()
+  const locale = useLocale()
   const [reviews, setReviews] = useState<Record<string, { score: number; comment: string }>>(
     openAnswers.reduce((acc, answer) => {
       acc[answer.id] = {
@@ -61,14 +64,14 @@ export default function TestReviewForm({
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label>Candidate's Answer</Label>
+              <Label>{t("common.candidatesAnswer", locale)}</Label>
               <div className="mt-2 p-4 bg-gray-50 rounded-lg">
                 <p>{JSON.parse(answer.answer || '""')}</p>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>Score (0-{answer.question.points})</Label>
+                <Label>{t("common.score", locale)} (0-{answer.question.points})</Label>
                 <Input
                   type="number"
                   min="0"
@@ -86,7 +89,7 @@ export default function TestReviewForm({
                 />
               </div>
               <div>
-                <Label>Comment</Label>
+                <Label>{t("common.comment", locale)}</Label>
                 <Textarea
                   value={reviews[answer.id]?.comment || ""}
                   onChange={(e) =>
@@ -98,7 +101,7 @@ export default function TestReviewForm({
                       },
                     })
                   }
-                  placeholder="Add feedback..."
+                  placeholder={t("common.addFeedback", locale)}
                   rows={3}
                 />
               </div>
@@ -110,20 +113,20 @@ export default function TestReviewForm({
       {openAnswers.length === 0 && (
         <Card>
           <CardContent className="py-8 text-center text-muted-foreground">
-            No open-ended questions to review
+            {t("common.noOpenEndedQuestions", locale)}
           </CardContent>
         </Card>
       )}
 
       <Card>
         <CardHeader>
-          <CardTitle>General Comment</CardTitle>
+          <CardTitle>{t("common.generalComment", locale)}</CardTitle>
         </CardHeader>
         <CardContent>
           <Textarea
             value={generalComment}
             onChange={(e) => setGeneralComment(e.target.value)}
-            placeholder="Add overall feedback..."
+            placeholder={t("common.addOverallFeedback", locale)}
             rows={4}
           />
         </CardContent>
@@ -131,10 +134,10 @@ export default function TestReviewForm({
 
       <div className="flex justify-end gap-2">
         <Button variant="outline" onClick={() => router.back()}>
-          Cancel
+          {t("common.cancel", locale)}
         </Button>
         <Button onClick={handleSubmit} disabled={submitting}>
-          {submitting ? "Submitting..." : "Submit Review"}
+          {submitting ? t("common.submitting", locale) : t("common.submitReview", locale)}
         </Button>
       </div>
     </div>

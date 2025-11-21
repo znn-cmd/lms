@@ -51,8 +51,8 @@ export default async function MentorCandidatesPage() {
         <main className="p-8 mt-16">
           <div className="max-w-7xl mx-auto space-y-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">My Candidates</h1>
-              <p className="text-gray-600 mt-2">Manage candidates assigned to you</p>
+              <h1 className="text-3xl font-bold text-gray-900">{t("mentor.candidates.title", locale)}</h1>
+              <p className="text-gray-600 mt-2">{t("mentor.candidates.subtitle", locale)}</p>
             </div>
 
             <div className="grid gap-4">
@@ -71,13 +71,13 @@ export default async function MentorCandidatesPage() {
                           </h3>
                           <p className="text-sm text-muted-foreground">{candidate.user.email}</p>
                           <p className="text-sm text-muted-foreground mt-1">
-                            {candidate.currentVacancy?.title || "No vacancy"} • Status:{" "}
+                            {candidate.currentVacancy?.title || t("common.noVacancy", locale)} • {t("common.status", locale)}:{" "}
                             {candidate.status.replace("_", " ")}
                           </p>
                         </div>
                         <div className="text-right">
                           <p className="text-sm font-medium">
-                            {candidate.courses.length} course(s)
+                            {candidate.courses.length} {t("common.course", locale)}
                           </p>
                         </div>
                       </div>
@@ -90,9 +90,9 @@ export default async function MentorCandidatesPage() {
                 <Card>
                   <CardContent className="py-12 text-center">
                     <Users className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">No candidates assigned</h3>
+                    <h3 className="text-lg font-semibold mb-2">{t("mentor.dashboard.noCandidatesAssigned", locale)}</h3>
                     <p className="text-muted-foreground">
-                      You don't have any candidates assigned yet.
+                      {t("mentor.candidates.noCandidatesAssignedDesc", locale)}
                     </p>
                   </CardContent>
                 </Card>

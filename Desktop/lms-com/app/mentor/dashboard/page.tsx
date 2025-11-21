@@ -7,6 +7,8 @@ import { Header } from "@/components/layout/header"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Users, FileText, MessageSquare, TrendingUp } from "lucide-react"
 import Link from "next/link"
+import { getLocale } from "@/lib/get-locale"
+import { t } from "@/lib/i18n"
 
 export default async function MentorDashboard() {
   const session = await getServerSession(authOptions)
@@ -15,6 +17,7 @@ export default async function MentorDashboard() {
     redirect("/auth/signin")
   }
 
+  const locale = await getLocale()
   const userId = (session.user as any).id
   const mentor = await prisma.user.findUnique({
     where: { id: userId },
@@ -106,52 +109,52 @@ export default async function MentorDashboard() {
         <main className="p-8 mt-16">
           <div className="max-w-7xl mx-auto space-y-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Mentor Dashboard</h1>
-              <p className="text-gray-600 mt-2">Manage your candidates and review their progress</p>
+              <h1 className="text-3xl font-bold text-gray-900">{t("mentor.dashboard.title", locale)}</h1>
+              <p className="text-gray-600 mt-2">{t("mentor.dashboard.subtitle", locale)}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">My Candidates</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("mentor.dashboard.myCandidates", locale)}</CardTitle>
                   <Users className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{candidates.length}</div>
-                  <p className="text-xs text-muted-foreground">Assigned candidates</p>
+                  <p className="text-xs text-muted-foreground">{t("mentor.dashboard.assignedCandidates", locale)}</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Pending Reviews</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("mentor.dashboard.pendingReviews", locale)}</CardTitle>
                   <FileText className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{pendingTests.length}</div>
-                  <p className="text-xs text-muted-foreground">Tests awaiting review</p>
+                  <p className="text-xs text-muted-foreground">{t("mentor.dashboard.testsAwaitingReview", locale)}</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Average Progress</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("mentor.dashboard.averageProgress", locale)}</CardTitle>
                   <TrendingUp className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{Math.round(totalProgress)}%</div>
-                  <p className="text-xs text-muted-foreground">Course completion</p>
+                  <p className="text-xs text-muted-foreground">{t("mentor.dashboard.courseCompletion", locale)}</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Active Chats</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("mentor.dashboard.activeChats", locale)}</CardTitle>
                   <MessageSquare className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{candidates.length}</div>
-                  <p className="text-xs text-muted-foreground">Ongoing conversations</p>
+                  <p className="text-xs text-muted-foreground">{t("mentor.dashboard.ongoingConversations", locale)}</p>
                 </CardContent>
               </Card>
             </div>
@@ -159,8 +162,8 @@ export default async function MentorDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>My Candidates</CardTitle>
-                  <CardDescription>List of candidates you're mentoring</CardDescription>
+                  <CardTitle>{t("mentor.dashboard.myCandidates", locale)}</CardTitle>
+                  <CardDescription>{t("mentor.dashboard.candidatesListDescription", locale)}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
@@ -176,10 +179,10 @@ export default async function MentorDashboard() {
                               {candidate.user.name} {candidate.user.surname}
                             </p>
                             <p className="text-sm text-muted-foreground">
-                              {candidate.currentVacancy?.title || "No vacancy"}
+                              {candidate.currentVacancy?.title || t("common.noVacancy", locale)}
                             </p>
                             <p className="text-xs text-muted-foreground mt-1">
-                              Status: {candidate.status.replace("_", " ")}
+                              {t("common.status", locale)}: {candidate.status.replace("_", " ")}
                             </p>
                           </div>
                           <div className="text-right">
@@ -191,14 +194,14 @@ export default async function MentorDashboard() {
                                   )
                                 : 0}%
                             </p>
-                            <p className="text-xs text-muted-foreground">Progress</p>
+                            <p className="text-xs text-muted-foreground">{t("common.progress", locale)}</p>
                           </div>
                         </div>
                       </Link>
                     ))}
                     {candidates.length === 0 && (
                       <p className="text-center text-muted-foreground py-8">
-                        No candidates assigned yet
+                        {t("mentor.dashboard.noCandidatesAssigned", locale)}
                       </p>
                     )}
                   </div>
@@ -207,8 +210,8 @@ export default async function MentorDashboard() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Pending Test Reviews</CardTitle>
-                  <CardDescription>Tests that need your review</CardDescription>
+                  <CardTitle>{t("mentor.dashboard.pendingTestReviews", locale)}</CardTitle>
+                  <CardDescription>{t("mentor.dashboard.testsNeedReview", locale)}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
@@ -227,17 +230,17 @@ export default async function MentorDashboard() {
                             {review.candidateTest.test.title}
                           </p>
                           <p className="text-xs text-muted-foreground mt-1">
-                            Submitted:{" "}
+                            {t("common.submitted", locale)}:{" "}
                             {review.candidateTest.completedAt
-                              ? new Date(review.candidateTest.completedAt).toLocaleDateString()
-                              : "N/A"}
+                              ? new Date(review.candidateTest.completedAt).toLocaleDateString(locale)
+                              : t("common.nA", locale)}
                           </p>
                         </div>
                       </Link>
                     ))}
                     {pendingTests.length === 0 && (
                       <p className="text-center text-muted-foreground py-8">
-                        No pending reviews
+                        {t("mentor.dashboard.noPendingReviews", locale)}
                       </p>
                     )}
                   </div>
