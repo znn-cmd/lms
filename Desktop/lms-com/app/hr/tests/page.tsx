@@ -8,6 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { FileText, Plus, Edit, Trash2, Link as LinkIcon } from "lucide-react"
 import Link from "next/link"
+import { getLocale } from "@/lib/get-locale"
+import { t } from "@/lib/i18n"
 
 export default async function TestsPage() {
   const session = await getServerSession(authOptions)
@@ -15,6 +17,8 @@ export default async function TestsPage() {
   if (!session || !["HR", "ADMIN"].includes((session.user as any)?.role)) {
     redirect("/auth/signin")
   }
+
+  const locale = await getLocale()
 
   const tests = await prisma.test.findMany({
     include: {
